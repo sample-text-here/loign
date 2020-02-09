@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Welcome to Glitch!</title>
+    <link
+      id="favicon"
+      rel="icon"
+      href="https://glitch.com/edit/favicon-app.ico"
+      type="image/x-icon"
+    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body onbeforeunload="update();" class="mainform">
+    <div id="anon">
+      <h1>Hello</h1>
+      <p>I don't even know what this is.<br />Thank you.</p>
+      <div id="choices">
+        <a href="login" id="login">Login</a>
+        <div id="divider"></div>
+        <a href="signup" id="signup">Signup</a>
+      </div>
+    </div>
+    <div id="main">
+      <h1 id="header">Hello</h1>
+      <textarea id="status" placeholder="Type what you need to..."></textarea>
+      <div id="settings">
+        <a href="" id="viewdoc">View as document</a><br /><br>
+        <button id="logout" onclick="logout();" class="link">Log Out</button
+        ><br />
+        <a href="edit">Edit</a>
+      </div>
+    </div>
+    <script>
+      const $ = e => document.getElementById(e);
+
+      function logout() {
+        fetch("logout").then(() => {
+          location.reload();
+        });
+      }
+
+      $("logout").style.display = "none";
+      $("main").style.display = "none";
+      $("anon").style.display = "none";
+      $("viewdoc").style.display = "none";
+      fetch("/user")
+        .then(e => e.json())
+        .then(user => {
+          if (user.user) {
+            $("header").innerText += ", " + user.user + "!";
+            $("logout").style.display = "block";
+            $("main").style.display = "block";
+            console.log("/u/" + user.user);
+            $("viewdoc").href = "/u/" + user.user;
+            $("viewdoc").style.display = "inline";
+            if (user.status) {
+              $("status").value = user.status;
+            }
+          } else {
+            $("anon").style.display = "block";
+          }
+        });
+
+      let typingTimer;
+      $("status").addEventListener("keyup", () => {
+        clearTimeout(typingTimer);
+        if ($("status").value) {
+          typingTimer = setTimeout(update, 200);
+        }
+      });
+
+      function update() {
+        var data = {
+          status: $("status").value
+        };
+
+        fetch("user/updateStatus", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        })
+          .then(res => res.json())
+          .then(res => {
+            console.log(res);
+          });
+      }
+    </script>
+
+    <script src="link.js"></script>
+    <script src="cursor.js"></script>
+
+    <!-- include the Glitch button to show what the webpage is about and
+            to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>

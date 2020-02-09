@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login</title>
+    <link
+      id="favicon"
+      rel="icon"
+      href="https://glitch.com/edit/favicon-app.ico"
+      type="image/x-icon"
+    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="mainform">
+    <div class="center">
+      <form id="form">
+        <h2>Login</h2>
+        <input
+          id="username"
+          type="text"
+          maxlength="100"
+          placeholder="username"
+        />
+        <input
+          id="password"
+          type="password"
+          maxlength="100"
+          placeholder="password"
+        />
+        <button type="submit" id="submit">Submit</button>
+        <br /><br /><span id="error"></span>
+        <hr />
+        Don't have an account? <a href="signup">Signup</a>
+      </form>
+    </div>
+    <script>
+      const $ = e => document.getElementById(e);
+
+      $("form").onsubmit = e => {
+        e.preventDefault();
+
+        const data = {
+          username: $("username").value,
+          password: $("password").value
+        };
+
+        fetch("/user/login", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        })
+          .then(res => res.json())
+          .then(res => {
+            if (!res.error) {
+              goto("..");
+            } else {
+              $("error").innerText = res.message;
+            }
+          });
+      };
+    </script>
+
+    <script src="link.js"></script>
+    <script src="cursor.js"></script>
+
+    <!-- include the Glitch button to show what the webpage is about and
+            to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>
