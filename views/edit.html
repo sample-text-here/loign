@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Edit</title>
+    <link
+      id="favicon"
+      rel="icon"
+      href="https://glitch.com/edit/favicon-app.ico"
+      type="image/x-icon"
+    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/public/client.js"></script>
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="mainform">
+    <div class="edit">
+      <h1>Edit</h1>
+      <a href="..">Back</a>
+      <hr />
+      <h2>Change password</h2>
+      <form id="form">
+        <input
+          id="oldpass"
+          type="password"
+          maxlength="100"
+          placeholder="old password"
+        />
+        <input
+          id="newpass"
+          type="password"
+          maxlength="100"
+          placeholder="new password"
+        />
+        <input
+          id="confpass"
+          type="password"
+          maxlength="100"
+          placeholder="confirm password"
+        />
+
+        <button type="submit" id="submit">Submit</button>
+      </form>
+      <br /><br />
+      <button onclick="deluser();">
+        Delete user
+      </button>
+    </div>
+    <script>
+      const $ = e => document.getElementById(e);
+
+      document.body.style.margin = 0;
+      $("form").onsubmit = e => {
+        e.preventDefault();
+
+        const data = {
+          oldpass: $("oldpass").value,
+          newpass: $("newpass").value,
+          confpass: $("confpass").value
+        };
+
+        if (data.newpass != data.confpass) {
+          console.log("newpass!=confpass");
+          return false;
+        }
+
+        fetch("/user/updatePass", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        })
+          .then(res => res.json())
+          .then(res => {
+            if (res.error) {
+              alert(JSON.stringify(res));
+            } else {
+              goto("..");
+            }
+          });
+      };
+
+      function deluser() {
+        var res = confirm("Are you 100% sure?");
+        if (res) {
+          fetch("/user/deleteUser", {
+            method: "POST"
+          })
+            .then(e => e.text())
+            .then(e => {
+              if (!e.error) {
+                fetch("/logout").then(() => {
+                  window.location.href = "..";
+                });
+              } else {
+                alert(e.message);
+              }
+            });
+        }
+      }
+    </script>
+
+    <script src="link.js"></script>
+    <script src="cursor.js"></script>
+
+    <!-- include the Glitch button to show what the webpage is about and
+            to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>

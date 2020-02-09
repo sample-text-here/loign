@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Signup</title>
+    <link
+      id="favicon"
+      rel="icon"
+      href="https://glitch.com/edit/favicon-app.ico"
+      type="image/x-icon"
+    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body class="mainform">
+    <div class="center">
+      <form id="form">
+        <h2>Signup</h2>
+        <input
+          id="username"
+          type="text"
+          maxlength="100"
+          placeholder="username"
+        />
+        <input
+          id="password"
+          type="password"
+          maxlength="100"
+          placeholder="password"
+        />
+        <input
+          id="confpass"
+          type="password"
+          maxlength="100"
+          placeholder="confirm password"
+        />
+        <button type="submit" id="submit">Submit</button>
+        <br /><br /><span id="error"></span>
+        <hr />
+        Already have an account? <a href="login">Login</a>
+      </form>
+    </div>
+
+    <script>
+      const $ = e => document.getElementById(e);
+
+      $("form").onsubmit = e => {
+        e.preventDefault();
+
+        const data = {
+          username: $("username").value,
+          password: $("password").value,
+          confpass: $("confpass").value
+        };
+
+        if (!data.username) {
+          parseError("Username is empty!");
+          return false;
+        }
+
+        if (!data.password) {
+          parseError("Password is empty!");
+          return false;
+        }
+
+        if (data.password != data.confpass) {
+          parseError("Passwords do not match!");
+          return false;
+        }
+
+        fetch("/user/addUser", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        })
+          .then(res => res.json())
+          .then(res => {
+            if (!res.error) {
+              goto("..");
+            } else {
+              parseError(res.message);
+            }
+          });
+      };
+
+      function parseError(e) {
+        $("error").innerText = e;
+      }
+    </script>
+
+    <script src="link.js"></script>
+    <script src="cursor.js"></script>
+
+    <!-- include the Glitch button to show what the webpage is about and
+            to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>
