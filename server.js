@@ -268,7 +268,8 @@ app.post("/user/updatePass", (req, res) => {
 app.post("/user/updateStatus", (req, res) => {
   if (allowWrite) {
     const user = req.cookies.user;
-    const status = cleanseString(req.body.status);
+    // const status = cleanseString(req.body.status);
+    const status = req.body.status;
     console.log("Update user status: " + user + " to " + status);
     if (user) {
       db.get(
@@ -308,9 +309,9 @@ app.post("/user/updateStatus", (req, res) => {
 // helper function that prevents html/css/script malice
 const cleanseString = function(string) {
   return string
+      .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/&/g, "&amp;");
+    .replace(/>/g, "&gt;");
 };
 
 // listen for requests :)

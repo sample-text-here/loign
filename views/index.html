@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Welcome to Glitch!</title>
+    <title>Loign</title>
     <link
       id="favicon"
       rel="icon"
-      href="https://glitch.com/edit/favicon-app.ico"
+      href="https://drive.google.com/uc?id=1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
       type="image/x-icon"
     />
     <meta charset="utf-8" />
@@ -28,15 +28,22 @@
       <h1 id="header">Hello</h1>
       <textarea id="status" placeholder="Type what you need to..."></textarea>
       <div id="settings">
-        <a href="" id="viewdoc">View as document</a><br /><br>
+        <a href="" id="viewdoc" onclick="sessionStorage.setItem('viewdoc',true)">View as document</a><br /><br />
         <button id="logout" onclick="logout();" class="link">Log Out</button
         ><br />
-        <a href="edit">Edit</a>
+        <a href="edit" id="edit">Edit</a>
       </div>
     </div>
+    
+    <script src="link.js"></script>
+<!--     <script src="cursor.js"></script> -->
     <script>
       const $ = e => document.getElementById(e);
-
+const makeHotspot = e => {
+    document.getElementById(e).classList.add( "hotspot"
+);
+  };
+      
       function logout() {
         fetch("logout").then(() => {
           location.reload();
@@ -57,11 +64,18 @@
             console.log("/u/" + user.user);
             $("viewdoc").href = "/u/" + user.user;
             $("viewdoc").style.display = "inline";
+            document.title="Welcome, "+user.user+"!";
             if (user.status) {
               $("status").value = user.status;
             }
+            makeHotspot("edit");
+            makeHotspot("viewdoc");
+            makeHotspot("logout");
+            // serInterval(pinglogin,60000);
           } else {
             $("anon").style.display = "block";
+            makeHotspot("login");
+            makeHotspot("signup");
           }
         });
 
@@ -69,7 +83,7 @@
       $("status").addEventListener("keyup", () => {
         clearTimeout(typingTimer);
         if ($("status").value) {
-          typingTimer = setTimeout(update, 200);
+          typingTimer = setTimeout(update, 100);
         }
       });
 
@@ -88,10 +102,12 @@
             console.log(res);
           });
       }
-    </script>
-
-    <script src="link.js"></script>
-    <script src="cursor.js"></script>
+      
+      function pinglogin() {
+        // fetch('/user').then(e=>e.json()).then(e=>{if(!e.user){alert('Session expired!');window.location.reload();}});
+        
+      }
+      </script>
 
     <!-- include the Glitch button to show what the webpage is about and
             to make it easier for folks to view source and remix -->

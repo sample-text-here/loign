@@ -145,7 +145,7 @@ textarea {
 
 #logout {
   float: right;
-  position:relative;
+  position: relative;
   bottom: 2em;
 }
 
@@ -181,27 +181,27 @@ textarea {
 .innerCursor {
   width: 0.5em;
   height: 0.5em;
-  background: red;
+  background: cornflowerblue;
 }
 
 .outerCursor {
   width: 2.5em;
   height: 2.5em;
-  border: solid red 1px;
+  border: solid cornflowerblue 1px;
 }
 
 .anim {
   background: white;
   border-radius: 50%;
   position: fixed;
-  transform: translate(-50%, -50%);
-}
-
-.anim-first {
   height: max(200vw, 200vh);
   width: max(200vw, 200vh);
   top: 50vh;
   left: 50vw;
+  transform: translate(-50%, -50%);
+}
+
+.anim-first {
   animation: fade 0.3s forwards;
 }
 
@@ -233,5 +233,5 @@ textarea {
 
 *,
 *:hover {
-  cursor: none;
+/*   cursor: none; */
 }
