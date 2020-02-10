@@ -4,11 +4,14 @@ var isBtnClicked = true;
 var x, y;
 
 var anim = document.createElement("div");
-anim.className = "anim-first anim";
+anim.className = "anim";
 document.body.appendChild(anim);
-setTimeout(() => {
-  document.body.removeChild(anim);
-}, 300);
+window.onload = () => {
+  anim.className = "anim-first anim";
+  setTimeout(() => {
+    document.body.removeChild(anim);
+  }, 300);
+};
 
 links.forEach(a => {
   a.addEventListener("click", e => {
@@ -20,7 +23,7 @@ links.forEach(a => {
     var url = a.href;
     setTimeout(() => {
       window.location.href = url;
-    }, 300);
+    }, 350);
   });
 });
 
@@ -35,7 +38,7 @@ buttons.forEach(btn => {
       setTimeout(() => {
         isBtnClicked = false;
         btn.click();
-      }, 300);
+      }, 350);
     }
   });
 });
