@@ -23,7 +23,7 @@ links.forEach(a => {
     var url = a.href;
     setTimeout(() => {
       window.location.href = url;
-    }, 350);
+    }, 400);
   });
 });
 
@@ -38,7 +38,7 @@ buttons.forEach(btn => {
       setTimeout(() => {
         isBtnClicked = false;
         btn.click();
-      }, 350);
+      }, 400);
     }
   });
 });

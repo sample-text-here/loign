@@ -208,7 +208,7 @@ textarea {
 .anim-last {
   height: 0;
   width: 0;
-  animation: expand 0.8s forwards;
+  animation: expand 0.7s forwards;
 }
 
 @keyframes expand {

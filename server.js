@@ -29,9 +29,13 @@ const db = new sqlite3.Database(dbFile);
 // if ./.data/sqlite.db does not exist, create it, otherwise print records to console
 db.serialize(() => {
   if (!exists) {
-    db.run("DROP TABLE Users");
+    db.run("DROP TABLE IF EXISTS Users");
+    db.run("DROP TABLE IF EXISTS Posts");
     db.run(
-      "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, status TEXT)"
+      "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
+    );
+    db.run(
+      "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT)"
     );
     console.log("it is done");
   }
@@ -58,43 +62,118 @@ app.get("/edit", (req, res) => {
 
 app.get("/user", (req, res) => {
   var data = req.cookies;
-  db.get(
-    "SELECT status FROM Users WHERE username=?",
-    [data.user],
-    (err, row) => {
-      if (!err) {
-        if (row) {
-          data.status = row.status;
+  if (data.user) {
+    db.get(
+      "SELECT status, joined FROM Users WHERE username=?",
+      [data.user],
+      (err, row) => {
+        if (!err) {
+          if (row) {
+            data.status = row.status;
+          }
+          res.send(data);
         }
-        res.send(data);
       }
-    }
-  );
+    );
+  } else res.send({});
 });
 
 app.get("/logout", (req, res) => {
   res.clearCookie("user").send({ message: "success" });
 });
 
-app.get('/u/:user', (req, res) => {
-    res.sendFile(`${__dirname}/views/user.html`);
+app.get("/post", (req, res) => {
+  res.sendFile(`${__dirname}/views/post.html`);
 });
 
-app.get("/get/:user", (req, res) => {
+app.get("/@:user", (req, res) => {
+  res.sendFile(`${__dirname}/views/user.html`);
+});
+
+app.get("/~:sub", (req, res) => {
+  res.sendFile(`${__dirname}/views/sub.html`);
+});
+
+app.get("/get/user/:user", (req, res) => {
   var data = {};
   data.user = req.params.user;
   db.get(
-    "SELECT status FROM Users WHERE username=?",
+    "SELECT status, joined FROM Users WHERE username=?",
     [data.user],
     (err, row) => {
+      console.log(err + "\n" + row);
       if (!err) {
         if (row) {
           data.status = row.status;
+          data.joined = row.joined;
         }
         res.send(data);
       }
     }
   );
+});
+
+app.get("/get/user/", (req, res) => {
+  db.all("SELECT username, status, joined FROM Users", [], (err, row) => {
+    if (!err) {
+      if (row) {
+        res.send(row);
+      }
+    }
+  });
+});
+
+app.get("/get/posts/:sub", (req, res) => {
+  var data = {};
+  data.sub = req.params.sub;
+  db.all("SELECT * FROM Posts WHERE tag=?", [data.sub], (err, row) => {
+    console.log(row);
+    if (!err) {
+      if (row) {
+        res.send(row);
+      }
+    }
+  });
+});
+
+app.get("/get/posts/", (req, res) => {
+  db.all("SELECT * FROM Posts", [], (err, row) => {
+    if (!err) {
+      res.send(row);
+    }
+  });
+});
+
+app.post("/post/submitPost", (req, res) => {
+  console.log(`Submit new post ${req.body.title}`);
+  if (allowWrite) {
+    const title = req.body.title;
+    const post = req.body.post;
+    const tag = req.body.tag;
+    const date = new Date();
+    const by = req.cookies.user;
+    if (by) {
+      db.run(
+        `INSERT INTO Posts (title, post, by, date, tag) VALUES (?,?,?,?,?)`,
+        [title, post, by, date, tag],
+        err => {
+          if (err) {
+            console.log(err);
+            console.log("error!");
+            res.send({
+              message: "Something happened, please try again",
+              error: true
+            });
+          } else {
+            console.log("success");
+            res.send({ message: "success", error: false });
+          }
+        }
+      );
+    } else {
+      res.send({ message: "No user!", error: true });
+    }
+  }
 });
 
 app.post("/user/addUser", (req, res) => {
@@ -102,6 +181,7 @@ app.post("/user/addUser", (req, res) => {
   if (allowWrite) {
     const user = cleanseString(req.body.username);
     const pass = req.body.password;
+    const joined = new Date();
     console.log("Add user: " + user + "@" + pass);
     db.get(
       `SELECT username FROM Users WHERE username=?`,
@@ -110,8 +190,8 @@ app.post("/user/addUser", (req, res) => {
         console.log(row);
         if (!row) {
           db.run(
-            `INSERT INTO Users (username, password) VALUES (?,?)`,
-            [user, pass],
+            `INSERT INTO Users (username, password, joined) VALUES (?,?, ?)`,
+            [user, pass, joined],
             error => {
               if (error) {
                 console.log("error!");
@@ -306,10 +386,26 @@ app.post("/user/updateStatus", (req, res) => {
   }
 });
 
+app.get("/reset", (req, res) => {
+  if (allowReset) {
+    db.serialize(() => {
+      db.run("DROP TABLE IF EXISTS Users");
+      db.run("DROP TABLE IF EXISTS Posts");
+      db.run(
+        "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
+      );
+      db.run(
+        "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT)"
+      );
+      console.log("RESET!");
+    });
+  }
+});
+
 // helper function that prevents html/css/script malice
 const cleanseString = function(string) {
   return string
-      .replace(/&/g, "&amp;")
+    .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 };

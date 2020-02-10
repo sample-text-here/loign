@@ -27,23 +27,20 @@
 
     <script>
       const $ = e => document.getElementById(e);
-      const user = window.location.pathname.split("@")[1];
-      fetch("/get/user/" + user)
-        .then(e => e.json())
+      const sub = window.location.pathname.split("~")[1];
+      console.log(sub);
+      fetch("/get/posts/"+sub).then(res=>res.json())
         .then(res => {
-          if (res.status) {
-            $("user").innerText = res.user;
-            $("memo").innerText = res.status;
-            document.title = "loign | " + res.user;
+        console.log(res);
+          if (res) {
+            $("user").innerText = res[0].by;
+            $("memo").innerText = res[0].post;
+            document.title = "loign | " + res[0].by;
           } else {
             document.title = "loign";
             $("user").innerText = "User does not exist!";
           }
         });
-      if (sessionStorage.getItem("viewdoc")=="false") {
-        $("back").style.display = "none";
-      }
-      sessionStorage.setItem("viewdoc", false);
     </script>
 
     <script src="../link.js"></script>
