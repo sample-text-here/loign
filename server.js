@@ -35,7 +35,7 @@ db.serialize(() => {
       "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
     );
     db.run(
-      "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT)"
+      "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER)"
     );
     console.log("it is done");
   }
@@ -130,14 +130,18 @@ app.get("/get/users/", (req, res) => {
 app.get("/get/posts/:sub", (req, res) => {
   var data = {};
   data.sub = req.params.sub;
-  db.all("SELECT * FROM Posts WHERE tag=? ORDER BY id DESC", [data.sub], (err, row) => {
-    console.log(row);
-    if (!err) {
-      if (row) {
-        res.send(row);
+  db.all(
+    "SELECT * FROM Posts WHERE tag=? ORDER BY id DESC",
+    [data.sub],
+    (err, row) => {
+      console.log(row);
+      if (!err) {
+        if (row) {
+          res.send(row);
+        }
       }
     }
-  });
+  );
 });
 
 app.get("/get/posts/", (req, res) => {
@@ -391,17 +395,16 @@ app.post("/user/updateStatus", (req, res) => {
 });
 
 app.get("/reset", (req, res) => {
-  if (allowReset) {
+  if (allowWrite) {
     db.serialize(() => {
-     /* db.run("DROP TABLE IF EXISTS Users");
+      db.run("DROP TABLE IF EXISTS Users");
       db.run("DROP TABLE IF EXISTS Posts");
       db.run(
         "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
       );
       db.run(
-        "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT)"
-      );*/
-      db.run("ALTER TABLE Posts ADD ");
+        "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER)"
+      );
       console.log("RESET!");
     });
   }
@@ -415,13 +418,11 @@ const cleanseString = function(string) {
     .replace(/>/g, "&gt;");
 };
 
-app.use(function(req,res){
-    res.status(404).send('404!');
+app.use(function(req, res) {
+  res.status(404).send("404!");
 });
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, () => {
   console.log(`Your app is listening on port ${listener.address().port}`);
 });
-
-
