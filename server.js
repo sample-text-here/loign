@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 const allowWrite = true;
-const allowReset = true;
+const allowReset = false;
 
 // we've started you off with Express,
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
@@ -393,14 +393,15 @@ app.post("/user/updateStatus", (req, res) => {
 app.get("/reset", (req, res) => {
   if (allowReset) {
     db.serialize(() => {
-      db.run("DROP TABLE IF EXISTS Users");
+     /* db.run("DROP TABLE IF EXISTS Users");
       db.run("DROP TABLE IF EXISTS Posts");
       db.run(
         "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
       );
       db.run(
         "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT)"
-      );
+      );*/
+      db.run("ALTER TABLE Posts ADD ");
       console.log("RESET!");
     });
   }
