@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Welcome to Glitch!</title>
+    <link
+      id="favicon"
+      rel="icon"
+      href="https://drive.google.com/uc?id=1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
+      type="image/x-icon"
+    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/card.css" />
+  </head>
+  <body class="mainform">
+    <div id="anon">
+      <a href=".." id="back" class="hotspot">Back</a>
+      <header>
+        <h1 id="title"></h1>
+      </header>
+      <main id="posts">
+        
+      </main>
+    </div>
+    <script src="h.js"></script>
+
+    <script>
+      const sub = window.location.pathname.split("~")[1];
+      console.log(sub);
+      fetch("/card")
+        .then(res => res.text())
+        .then(res => {
+          res = res.split("?");
+          start(res);
+        });
+      function start(card) {
+        fetch("/get/posts/" + sub)
+          .then(res => res.json())
+          .then(res => {
+            if (res.length > 0) {
+              for(var i=0;i<res.length;i++){
+                var post = card[0]
+                + res[i].title
+                +card[1]
+                +res[i].by
+                +card[2]
+                +timeSince(res[i].date)
+                +card[3]
+                +res[i].post
+                +card[3];
+                $("posts").innerHTML+=post;
+              }
+              $("title").innerText = sub; //res[0].title;
+              document.title = "loign | " + res[0].by;
+            } else {
+              document.title = "loign";
+              $("title").innerText = 'No posts with tag "' + sub + '"!';
+            }
+          });
+      }
+    </script>
+
+    <script src="../link.js"></script>
+    <!--     <script src="../cursor.js"></script> -->
+
+    <!-- include the Glitch button to show what the webpage is about and
+            to make it easier for folks to view source and remix -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>

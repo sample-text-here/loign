@@ -1,6 +1,8 @@
 # Loign
 
-It was supposed to be `login`, but it was already taken
+Blogging platform? Reddit clone? A game to see who can login the fastest? I don't even know what this is supposed to be anymore.
+
+(It was supposed to be `login`, but the name was already taken)
 
 ## Made ~~with~~ by [Glitch](https://glitch.com/)
 

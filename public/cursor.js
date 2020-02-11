@@ -1,4 +1,33 @@
 var hotspots = document.getElementsByClassName("hotspot");
+var linkstyle = document.createElement("style");
+linkstyle.innerHTML = `
+.cursor {
+  left: 0;
+  top: 0;
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 11000;
+}
+
+.innerCursor {
+  width: 0.5em;
+  height: 0.5em;
+  background: cornflowerblue;
+}
+
+.outerCursor {
+  width: 2.5em;
+  height: 2.5em;
+  border: solid cornflowerblue 1px;
+}
+
+*,
+*:hover {
+  cursor: none;
+}
+`;
+document.head.appendChild(linkstyle);
 
 var innerCursor = document.createElement("div");
 var outerCursor = document.createElement("div");

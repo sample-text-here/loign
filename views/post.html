@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Login</title>
+    <title>New post</title>
     <link
       id="favicon"
       rel="icon"
@@ -16,38 +16,46 @@
   </head>
   <body class="mainform">
     <div class="center">
-      <form id="form">
-        <h2>Login</h2>
-        <input
-          id="username"
-          type="text"
-          maxlength="100"
-          placeholder="username"
-        />
-        <input
-          id="password"
-          type="password"
-          maxlength="100"
-          placeholder="password"
-        />
+      <form id="form" style="min-width:340px;">
+        <h2>Post</h2>
+        <input id="title" type="text" maxlength="100" placeholder="title" />
+        <textarea
+          id="post"
+          placeholder="post"
+          style="border:solid lightgray 1px;border-radius:2px;"
+        ></textarea><br>Tag:
+        <select id="sub"
+          ><option>Tech</option
+          ><option>News</option
+          ><option>Funny</option></select
+        ><br><br>
         <button type="submit" id="submit" class="hotspot">Submit</button>
         <br /><br /><span id="error"></span>
-        <hr />
-        Don't have an account? <a href="signup" class="hotspot">Signup</a>
       </form>
     </div>
-        <script src="h.js"></script>
+    <script src="h.js"></script>
 
     <script>
+
       $("form").onsubmit = e => {
         e.preventDefault();
-
         const data = {
-          username: $("username").value,
-          password: $("password").value
+          title: $("title").value,
+          post: $("post").value,
+          tag: $("sub").value
         };
 
-        fetch("/user/login", {
+        if (!data.title) {
+          parseError("Title is empty!");
+          return false;
+        }
+
+        if (!data.post) {
+          parseError("There's no post!");
+          return false;
+        }
+
+        fetch("/post/submitPost", {
           method: "POST",
           body: JSON.stringify(data),
           headers: { "Content-Type": "application/json" }
@@ -61,10 +69,12 @@
             }
           });
       };
+
+      
     </script>
 
     <script src="link.js"></script>
-<!--     <script src="cursor.js"></script> -->
+<!--         <script src="cursor.js"></script> -->
 
     <!-- include the Glitch button to show what the webpage is about and
             to make it easier for folks to view source and remix -->

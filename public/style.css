@@ -105,13 +105,15 @@ textarea {
   min-height: 240px;
   height: 100%;
   padding: 1em;
-  border: none;
+  border: solid lightgray 1px;
+  border-radius:2px;
 }
 
 .edit {
   min-height: 100vh;
   background: white;
-  max-width: 50vw;
+  width: 50vw;
+  min-width: 340px;
   margin: auto;
   padding: 1em;
   box-shadow: 0 0 5px gray;
@@ -121,7 +123,7 @@ textarea {
   box-shadow: none;
 }
 
-#anon {
+#main {
   min-height: 100vh;
   background: white;
   max-width: 80vw;
@@ -130,108 +132,21 @@ textarea {
   box-shadow: 0 0 5px gray;
 }
 
-#settings {
-  background: white;
+.anonprefs {
   padding: 1em;
-}
-
-#login {
-  float: left;
-}
-
-#signup {
-  float: right;
-}
-
-#logout {
-  float: right;
-  position: relative;
-  bottom: 2em;
-}
-
-#choices {
-  width: max(200px, 20vw);
-  margin: auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  width:100%;
 }
 
-#choices #divider {
-  width: 5px;
-  height: 100px;
-  margin: auto;
-  background: black;
-  text-align: center;
+.userprefs {
+  padding: 1em;
+  display: flex;
+  justify-content: space-between;
+  width:100%;
 }
 
-#choices a {
-  font-size: 1.5em;
-}
-
-.cursor {
-  left: 0;
-  top: 0;
-  position: fixed;
-  pointer-events: none;
-  border-radius: 50%;
-  z-index: 11000;
-}
-
-.innerCursor {
-  width: 0.5em;
-  height: 0.5em;
-  background: cornflowerblue;
-}
-
-.outerCursor {
-  width: 2.5em;
-  height: 2.5em;
-  border: solid cornflowerblue 1px;
-}
-
-.anim {
-  background: white;
-  border-radius: 50%;
-  position: fixed;
-  height: max(200vw, 200vh);
-  width: max(200vw, 200vh);
-  top: 50vh;
-  left: 50vw;
-  transform: translate(-50%, -50%);
-}
-
-.anim-first {
-  animation: fade 0.3s forwards;
-}
-
-.anim-last {
-  height: 0;
-  width: 0;
-  animation: expand 0.8s forwards;
-}
-
-@keyframes expand {
-  from {
-    height: 0px;
-    width: 0px;
-  }
-  to {
-    height: max(200vw, 200vh);
-    width: max(200vw, 200vh);
-  }
-}
-
-@keyframes fade {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-*,
-*:hover {
-/*   cursor: none; */
+.italic {
+  color:#444;
+  font-style:italic;
 }

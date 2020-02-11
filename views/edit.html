@@ -11,7 +11,6 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="/public/client.js"></script>
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
   </head>
@@ -19,6 +18,9 @@
     <div class="edit">
       <h1>Edit</h1>
       <a href="..">Back</a>
+      <hr />
+      <h2>Update bio</h2>
+      <textarea id="status" placeholder="Hello"></textarea>
       <hr />
       <h2>Change password</h2>
       <form id="form">
@@ -41,17 +43,26 @@
           placeholder="confirm password"
         />
 
-        <button type="submit" id="submit" class="hotspot">Submit</button>
+        <button type="submit" id="submit" class="hotspot">Submit</button
+        ><br /><br />
+        <span id="error"></span>
       </form>
-      <br /><br />
+      <br />
+      <hr />
+      <br />
       <button onclick="deluser();" class="hotspot">
         Delete user
       </button>
     </div>
-    <script>
-      const $ = e => document.getElementById(e);
+    <script src="h.js"></script>
 
-      document.body.style.margin = 0;
+    <script>
+      fetch("/user")
+        .then(e => e.json())
+        .then(res => {
+          $("status").value = res.status;
+        });
+      
       $("form").onsubmit = e => {
         e.preventDefault();
 
@@ -63,6 +74,7 @@
 
         if (data.newpass != data.confpass) {
           console.log("newpass!=confpass");
+          parseError("Passwords do not match");
           return false;
         }
 
@@ -74,7 +86,7 @@
           .then(res => res.json())
           .then(res => {
             if (res.error) {
-              alert(JSON.stringify(res));
+              parseError(res.message);
             } else {
               goto("..");
             }
@@ -91,13 +103,37 @@
             .then(e => {
               if (!e.error) {
                 fetch("/logout").then(() => {
-                  window.location.href = "..";
+                  goto("..");
                 });
               } else {
-                alert(e.message);
+                parseError(e.message);
               }
             });
         }
+      }
+
+      let typingTimer;
+      $("status").addEventListener("keyup", () => {
+        clearTimeout(typingTimer);
+        if ($("status").value) {
+          typingTimer = setTimeout(update, 100);
+        }
+      });
+
+      function update() {
+        var data = {
+          status: $("status").value
+        };
+
+        fetch("user/updateStatus", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        })
+          .then(res => res.json())
+          .then(res => {
+            console.log(res);
+          });
       }
     </script>
 
