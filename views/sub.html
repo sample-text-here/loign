@@ -13,34 +13,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/card.css" />
   </head>
   <body class="mainform">
     <div id="anon">
       <a href=".." id="back" class="hotspot">Back</a>
       <header>
-        <h1 id="user"></h1>
+        <h1 id="title"></h1>
       </header>
-      <main>
-        <p id="memo"></p>
+      <main id="posts">
+        
       </main>
     </div>
+    <script src="h.js"></script>
 
     <script>
-      const $ = e => document.getElementById(e);
       const sub = window.location.pathname.split("~")[1];
       console.log(sub);
-      fetch("/get/posts/"+sub).then(res=>res.json())
+      fetch("/card")
+        .then(res => res.text())
         .then(res => {
-        console.log(res);
-          if (res) {
-            $("user").innerText = res[0].by;
-            $("memo").innerText = res[0].post;
-            document.title = "loign | " + res[0].by;
-          } else {
-            document.title = "loign";
-            $("user").innerText = "User does not exist!";
-          }
+          res = res.split("?");
+          start(res);
         });
+      function start(card) {
+        fetch("/get/posts/" + sub)
+          .then(res => res.json())
+          .then(res => {
+            if (res.length > 0) {
+              for(var i=0;i<res.length;i++){
+                var post = card[0]
+                + res[i].title
+                +card[1]
+                +res[i].by
+                +card[2]
+                +timeSince(res[i].date)
+                +card[3]
+                +res[i].post
+                +card[3];
+                $("posts").innerHTML+=post;
+              }
+              $("title").innerText = sub; //res[0].title;
+              document.title = "loign | " + res[0].by;
+            } else {
+              document.title = "loign";
+              $("title").innerText = 'No posts with tag "' + sub + '"!';
+            }
+          });
+      }
     </script>
 
     <script src="../link.js"></script>

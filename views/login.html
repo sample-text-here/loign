@@ -36,9 +36,9 @@
         Don't have an account? <a href="signup" class="hotspot">Signup</a>
       </form>
     </div>
-    <script>
-      const $ = e => document.getElementById(e);
+        <script src="h.js"></script>
 
+    <script>
       $("form").onsubmit = e => {
         e.preventDefault();
 
@@ -57,7 +57,7 @@
             if (!res.error) {
               goto("..");
             } else {
-              $("error").innerText = res.message;
+              parseError(res.message);
             }
           });
       };

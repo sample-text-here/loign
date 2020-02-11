@@ -60,6 +60,10 @@ app.get("/edit", (req, res) => {
   res.sendFile(`${__dirname}/views/edit.html`);
 });
 
+app.get("/card", (req, res) => {
+  res.sendFile(`${__dirname}/views/card.html`);
+});
+
 app.get("/user", (req, res) => {
   var data = req.cookies;
   if (data.user) {
@@ -94,7 +98,7 @@ app.get("/~:sub", (req, res) => {
   res.sendFile(`${__dirname}/views/sub.html`);
 });
 
-app.get("/get/user/:user", (req, res) => {
+app.get("/get/users/:user", (req, res) => {
   var data = {};
   data.user = req.params.user;
   db.get(
@@ -113,7 +117,7 @@ app.get("/get/user/:user", (req, res) => {
   );
 });
 
-app.get("/get/user/", (req, res) => {
+app.get("/get/users/", (req, res) => {
   db.all("SELECT username, status, joined FROM Users", [], (err, row) => {
     if (!err) {
       if (row) {
@@ -126,7 +130,7 @@ app.get("/get/user/", (req, res) => {
 app.get("/get/posts/:sub", (req, res) => {
   var data = {};
   data.sub = req.params.sub;
-  db.all("SELECT * FROM Posts WHERE tag=?", [data.sub], (err, row) => {
+  db.all("SELECT * FROM Posts WHERE tag=? ORDER BY id DESC", [data.sub], (err, row) => {
     console.log(row);
     if (!err) {
       if (row) {
@@ -137,7 +141,7 @@ app.get("/get/posts/:sub", (req, res) => {
 });
 
 app.get("/get/posts/", (req, res) => {
-  db.all("SELECT * FROM Posts", [], (err, row) => {
+  db.all("SELECT * FROM Posts ORDER BY id DESC", [], (err, row) => {
     if (!err) {
       res.send(row);
     }
@@ -410,7 +414,13 @@ const cleanseString = function(string) {
     .replace(/>/g, "&gt;");
 };
 
+app.use(function(req,res){
+    res.status(404).send('404!');
+});
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, () => {
   console.log(`Your app is listening on port ${listener.address().port}`);
 });
+
+

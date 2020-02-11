@@ -5,7 +5,7 @@
     <link
       id="favicon"
       rel="icon"
-      href="https://doc-00-38-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/jaj4uhj5c6titpklk9ngb868fj0r1ah5/1581305400000/14669126501069260184/*/1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
+      href="https://drive.google.com/uc?id=1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
       type="image/x-icon"
     />
     <meta charset="utf-8" />
@@ -13,34 +13,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/card.css" />
   </head>
   <body onbeforeunload="update();" class="mainform">
-    <div id="anon">
-      <h1>Hello</h1>
-      <p>I don't even know what this is.<br />Thank you.</p>
-      <div id="choices">
-        <a href="login" id="login">Login</a>
-        <div id="divider"></div>
-        <a href="signup" id="signup">Signup</a>
-      </div>
-    </div>
     <div id="main">
-      <h1 id="header">Hello</h1>
-      <textarea id="status" placeholder="Type what you need to..."></textarea>
       <div id="settings">
-        <a href="" id="viewdoc" onclick="sessionStorage.setItem('viewdoc',true)"
-          >View as document</a
-        ><br /><br />
-        <button id="logout" onclick="logout();" class="link">Log Out</button
-        ><br />
-        <a href="edit" id="edit">Edit</a>
+        <div class="userprefs">
+          <a
+            href=""
+            id="viewdoc"
+            onclick="sessionStorage.setItem('viewdoc',true)"
+            >View Profile</a
+          >
+          <a href="edit" id="edit">Edit account</a>
+          <button id="logout" onclick="logout();" class="link">Log Out</button>
+        </div>
+        <div class="anonprefs">
+          <a href="login" id="login">Login</a>
+          <a href="signup" id="signup">Signup</a>
+        </div>
       </div>
+
+      <h1 id="header">Hello</h1>
+      <p>I don't even know what this is.<br />Thank you.</p>
+<button id="newpost" onclick="goto('post')">
+New post
+  </button>
+      <div id="posts"></div>
     </div>
 
     <script src="link.js"></script>
-<!--     <script src="cursor.js"></script> -->
+    <script src="h.js"></script>
+    <!--     <script src="cursor.js"></script> -->
     <script>
-      const $ = e => document.getElementById(e);
       const makeHotspot = e => {
         document.getElementById(e).classList.add("hotspot");
       };
@@ -51,57 +56,41 @@
         });
       }
 
-      $("logout").style.display = "none";
-      $("main").style.display = "none";
-      $("anon").style.display = "none";
-      $("viewdoc").style.display = "none";
+      const userprefs = document.getElementsByClassName("userprefs")[0];
+      const anonprefs = document.getElementsByClassName("anonprefs")[0];
+      userprefs.style.display = "none";
+      anonprefs.style.display = "none";
+      $('newpost').style.display='none';
       fetch("/user")
         .then(e => e.json())
         .then(user => {
+          console.log(user);
           if (user.user) {
-            $("header").innerText += ", " + user.user + "!";
-            $("logout").style.display = "block";
-            $("main").style.display = "block";
             console.log("/u/" + user.user);
+            userprefs.style.display = "block";
+                  $('newpost').style.display='block';
+
             $("viewdoc").href = "/@" + user.user;
-            $("viewdoc").style.display = "inline";
+            $("header").innerText = `Welcome, ${user.user}!`;
             document.title = "Welcome, " + user.user + "!";
-            if (user.status) {
-              $("status").value = user.status;
-            }
             makeHotspot("edit");
             makeHotspot("viewdoc");
             makeHotspot("logout");
           } else {
-            $("anon").style.display = "block";
+            anonprefs.style.display = "block";
+
             makeHotspot("login");
             makeHotspot("signup");
           }
         });
 
-      let typingTimer;
-      $("status").addEventListener("keyup", () => {
-        clearTimeout(typingTimer);
-        if ($("status").value) {
-          typingTimer = setTimeout(update, 100);
-        }
-      });
-
-      function update() {
-        var data = {
-          status: $("status").value
-        };
-
-        fetch("user/updateStatus", {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        })
-          .then(res => res.json())
-          .then(res => {
-            console.log(res);
-          });
-      }
+      fetch("/card")
+        .then(res => res.text())
+        .then(res => {
+          console.log(res);
+          res = res.split("?");
+          start(res, "", $("posts"));
+        });
     </script>
 
     <!-- include the Glitch button to show what the webpage is about and

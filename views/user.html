@@ -13,41 +13,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/cards.css" />
   </head>
   <body class="mainform">
-    <div id="anon">
+    <div id="main">
       <a href=".." id="back" class="hotspot">Back</a>
       <header>
-        <h1 id="user"></h1>
+        <h1 id="user" style="margin-bottom:0;"></h1>
+        <span class="italic" id="joined"></span>
       </header>
       <main>
         <p id="memo"></p>
       </main>
     </div>
+    <script src="h.js"></script>
 
     <script>
-      const $ = e => document.getElementById(e);
       const user = window.location.pathname.split("@")[1];
-      fetch("/get/user/" + user)
+      fetch("/get/users/" + user)
         .then(e => e.json())
         .then(res => {
-          if (res.status) {
+          if (res.joined) {
             $("user").innerText = res.user;
             $("memo").innerText = res.status;
+            $("joined").innerText = "Joined " + timeSince(res.joined);
             document.title = "loign | " + res.user;
           } else {
             document.title = "loign";
             $("user").innerText = "User does not exist!";
           }
         });
-      if (sessionStorage.getItem("viewdoc")=="false") {
+      if (sessionStorage.getItem("viewdoc") == "false") {
         $("back").style.display = "none";
       }
       sessionStorage.setItem("viewdoc", false);
     </script>
 
     <script src="../link.js"></script>
-    <!--     <script src="../cursor.js"></script> -->
+    <!--         <script src="../cursor.js"></script> -->
 
     <!-- include the Glitch button to show what the webpage is about and
             to make it easier for folks to view source and remix -->

@@ -33,9 +33,9 @@
         <br /><br /><span id="error"></span>
       </form>
     </div>
+    <script src="h.js"></script>
 
     <script>
-      const $ = e => document.getElementById(e);
 
       $("form").onsubmit = e => {
         e.preventDefault();
@@ -70,13 +70,11 @@
           });
       };
 
-      function parseError(e) {
-        $("error").innerText = e;
-      }
+      
     </script>
 
     <script src="link.js"></script>
-    <!--     <script src="cursor.js"></script> -->
+<!--         <script src="cursor.js"></script> -->
 
     <!-- include the Glitch button to show what the webpage is about and
             to make it easier for folks to view source and remix -->

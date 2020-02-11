@@ -1,0 +1,9 @@
+.card {
+  border: solid black 2px;
+  border-radius:2px;
+  padding:0.5em;
+  margin:1em;
+}
+
+.card .title {
+}
