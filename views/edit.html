@@ -2,17 +2,12 @@
 <html lang="en">
   <head>
     <title>Edit</title>
-    <link
-      id="favicon"
-      rel="icon"
-      href="https://drive.google.com/uc?id=1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
-      type="image/x-icon"
-    />
+    <link id="favicon" rel="icon" href="../favicon.ico" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body class="mainform">
     <div class="edit">
@@ -50,19 +45,23 @@
       <br />
       <hr />
       <br />
-      <button onclick="deluser();" class="hotspot">
+      <button
+        onclick="deluser();"
+        class="hotspot"
+        style="color:red;border-color:red;"
+      >
         Delete user
       </button>
     </div>
-    <script src="h.js"></script>
-
+    <script src="js/client.js"></script>
+    <script src="js/link.js"></script>
     <script>
       fetch("/user")
         .then(e => e.json())
         .then(res => {
           $("status").value = res.status;
         });
-      
+
       $("form").onsubmit = e => {
         e.preventDefault();
 
@@ -96,19 +95,22 @@
       function deluser() {
         var res = confirm("Are you 100% sure?");
         if (res) {
-          fetch("/user/deleteUser", {
-            method: "POST"
-          })
-            .then(e => e.text())
-            .then(e => {
-              if (!e.error) {
-                fetch("/logout").then(() => {
-                  goto("..");
-                });
-              } else {
-                parseError(e.message);
-              }
-            });
+          res = confirm("This cannot be reversed!");
+          if (res) {
+            fetch("/user/deleteUser", {
+              method: "POST"
+            })
+              .then(e => e.text())
+              .then(e => {
+                if (!e.error) {
+                  fetch("/logout").then(() => {
+                    goto("..");
+                  });
+                } else {
+                  parseError(e.message);
+                }
+              });
+          }
         }
       }
 
@@ -136,13 +138,6 @@
           });
       }
     </script>
-
-    <script src="link.js"></script>
     <!--     <script src="cursor.js"></script> -->
-
-    <!-- include the Glitch button to show what the webpage is about and
-            to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js"></script>
   </body>
 </html>

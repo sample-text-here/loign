@@ -7,6 +7,9 @@
 body {
   font-family: helvetica, arial, sans-serif;
   margin: 2em;
+  background-image: linear-gradient(135deg, #81d4fa 0%, #05a8f4 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .bold {
@@ -20,17 +23,11 @@ p {
 form {
   padding: 15px;
   background-color: white;
-  box-shadow: 2px 2px 5px gray;
+  box-shadow: 2px 2px 15px gray;
   display: inline-block;
   width: 100%;
   max-width: 340px;
   border-radius: 3px;
-}
-
-.mainform {
-  background-image: linear-gradient(135deg, #81d4fa 0%, #29b6f6 100%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }
 
 .center {
@@ -132,16 +129,18 @@ textarea {
   box-shadow: 0 0 5px gray;
 }
 
+#settings {
+  width:100%;
+}
+
 .anonprefs {
   padding: 1em;
-  display: flex;
   justify-content: space-between;
   width:100%;
 }
 
 .userprefs {
   padding: 1em;
-  display: flex;
   justify-content: space-between;
   width:100%;
 }
@@ -149,4 +148,8 @@ textarea {
 .italic {
   color:#444;
   font-style:italic;
+}
+
+.empty {
+  display:none;
 }

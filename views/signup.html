@@ -2,19 +2,14 @@
 <html lang="en">
   <head>
     <title>Signup</title>
-    <link
-      id="favicon"
-      rel="icon"
-      href="https://drive.google.com/uc?id=1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
-      type="image/x-icon"
-    />
+    <link id="favicon" rel="icon" href="../favicon.ico" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
-  <body class="mainform">
+  <body>
     <div class="center">
       <form id="form">
         <h2>Signup</h2>
@@ -42,8 +37,8 @@
         Already have an account? <a href="login" class="hotspot">Login</a>
       </form>
     </div>
-    <script src="h.js"></script>
-
+    <script src="js/client.js"></script>
+    <script src="js/link.js"></script>
     <script>
       $("form").onsubmit = e => {
         e.preventDefault();
@@ -89,12 +84,6 @@
       }
     </script>
 
-    <script src="link.js"></script>
-<!--     <script src="cursor.js"></script> -->
-
-    <!-- include the Glitch button to show what the webpage is about and
-            to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js"></script>
+    <!--     <script src="cursor.js"></script> -->
   </body>
 </html>

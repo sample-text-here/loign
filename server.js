@@ -35,7 +35,7 @@ db.serialize(() => {
       "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
     );
     db.run(
-      "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER)"
+      "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT, upers TECT, downers TEXT)"
     );
     console.log("it is done");
   }
@@ -61,7 +61,7 @@ app.get("/edit", (req, res) => {
 });
 
 app.get("/card", (req, res) => {
-  res.sendFile(`${__dirname}/views/card.html`);
+  res.sendFile(`${__dirname}/templates/card.html`);
 });
 
 app.get("/user", (req, res) => {
@@ -128,11 +128,23 @@ app.get("/get/users/", (req, res) => {
 });
 
 app.get("/get/posts/:sub", (req, res) => {
+  var limit = req.query.limit;
+  var offset = req.query.offset;
+  var user = req.query.user;
+  if (!limit) {
+    limit = 10;
+  }
+  if (!offset) {
+    offset = 0;
+  }
+  if (!user) {
+    user = "%";
+  }
   var data = {};
   data.sub = req.params.sub;
   db.all(
-    "SELECT * FROM Posts WHERE tag=? ORDER BY id DESC",
-    [data.sub],
+    "SELECT * FROM Posts WHERE (tag=? AND by LIKE ?) ORDER BY id DESC LIMIT ? OFFSET ?",
+    [data.sub, user, limit, offset],
     (err, row) => {
       console.log(row);
       if (!err) {
@@ -145,11 +157,27 @@ app.get("/get/posts/:sub", (req, res) => {
 });
 
 app.get("/get/posts/", (req, res) => {
-  db.all("SELECT * FROM Posts ORDER BY id DESC", [], (err, row) => {
-    if (!err) {
-      res.send(row);
+  var limit = req.query.limit;
+  var offset = req.query.offset;
+  var user = req.query.user;
+  if (!limit) {
+    limit = 10;
+  }
+  if (!offset) {
+    offset = 0;
+  }
+  if (!user) {
+    user = "%";
+  }
+  db.all(
+    "SELECT * FROM Posts WHERE (by LIKE ?) ORDER BY id DESC LIMIT ? OFFSET ?",
+    [user, limit, offset],
+    (err, row) => {
+      if (!err) {
+        res.send(row);
+      }
     }
-  });
+  );
 });
 
 app.post("/post/submitPost", (req, res) => {
@@ -395,7 +423,7 @@ app.post("/user/updateStatus", (req, res) => {
 });
 
 app.get("/reset", (req, res) => {
-  if (allowWrite) {
+  if (allowReset) {
     db.serialize(() => {
       db.run("DROP TABLE IF EXISTS Users");
       db.run("DROP TABLE IF EXISTS Posts");
@@ -403,8 +431,12 @@ app.get("/reset", (req, res) => {
         "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
       );
       db.run(
-        "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER)"
+        "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT, upers TECT, downers TEXT)"
       );
+      db.run(
+        "CREATE TABLE Sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT expires TEXT)"
+      );
+
       console.log("RESET!");
     });
   }
