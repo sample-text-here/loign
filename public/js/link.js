@@ -1,8 +1,12 @@
 //init
-const links = document.querySelectorAll("a");
-const buttons = document.querySelectorAll("button");
+var links = document.querySelectorAll("a");
+var buttons = document.querySelectorAll("button");
 var isBtnClicked = true;
 var x, y;
+setInterval(() => {
+  links = document.querySelectorAll("a");
+  buttons = document.querySelectorAll("button");
+}, 100);
 
 //add styles
 var linkstyle = document.createElement("style");

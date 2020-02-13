@@ -2,23 +2,18 @@
 <html lang="en">
   <head>
     <title>Loign</title>
-    <link
-      id="favicon"
-      rel="icon"
-      href="https://drive.google.com/uc?id=1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
-      type="image/x-icon"
-    />
+    <link id="favicon" rel="icon" href="../favicon.ico" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
-    <link rel="stylesheet" href="/card.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/card.css" />
   </head>
-  <body onbeforeunload="update();" class="mainform">
+  <body onbeforeunload="update();">
     <div id="main">
-      <div id="settings">
-        <div class="userprefs">
+      <div class="settings">
+        <div class="userprefs empty">
           <a
             href=""
             id="viewdoc"
@@ -28,7 +23,8 @@
           <a href="edit" id="edit">Edit account</a>
           <button id="logout" onclick="logout();" class="link">Log Out</button>
         </div>
-        <div class="anonprefs">
+
+        <div class="anonprefs empty">
           <a href="login" id="login">Login</a>
           <a href="signup" id="signup">Signup</a>
         </div>
@@ -36,14 +32,14 @@
 
       <h1 id="header">Hello</h1>
       <p>I don't even know what this is.<br />Thank you.</p>
-<button id="newpost" onclick="goto('post')">
-New post
-  </button>
+      <button id="newpost" class="empty" onclick="goto('post')">
+        New post
+      </button>
       <div id="posts"></div>
     </div>
 
-    <script src="link.js"></script>
-    <script src="h.js"></script>
+    <script src="js/client.js"></script>
+    <script src="js/link.js"></script>
     <!--     <script src="cursor.js"></script> -->
     <script>
       const makeHotspot = e => {
@@ -58,18 +54,14 @@ New post
 
       const userprefs = document.getElementsByClassName("userprefs")[0];
       const anonprefs = document.getElementsByClassName("anonprefs")[0];
-      userprefs.style.display = "none";
-      anonprefs.style.display = "none";
-      $('newpost').style.display='none';
       fetch("/user")
         .then(e => e.json())
         .then(user => {
           console.log(user);
           if (user.user) {
             console.log("/u/" + user.user);
-            userprefs.style.display = "block";
-                  $('newpost').style.display='block';
-
+            userprefs.style.display = "flex";
+            $("newpost").style.display = "block";
             $("viewdoc").href = "/@" + user.user;
             $("header").innerText = `Welcome, ${user.user}!`;
             document.title = "Welcome, " + user.user + "!";
@@ -77,25 +69,18 @@ New post
             makeHotspot("viewdoc");
             makeHotspot("logout");
           } else {
-            anonprefs.style.display = "block";
-
+            anonprefs.style.display = "flex";
             makeHotspot("login");
             makeHotspot("signup");
           }
         });
 
-      fetch("/card")
-        .then(res => res.text())
+      fetch("/get/posts")
+        .then(res => res.json())
         .then(res => {
-          console.log(res);
-          res = res.split("?");
-          start(res, "", $("posts"));
+          createPosts(res, $("posts"));
+          initScroll("",$("posts"));
         });
     </script>
-
-    <!-- include the Glitch button to show what the webpage is about and
-            to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js"></script>
   </body>
 </html>

@@ -2,18 +2,13 @@
 <html lang="en">
   <head>
     <title>Welcome to Glitch!</title>
-    <link
-      id="favicon"
-      rel="icon"
-      href="https://drive.google.com/uc?id=1a2JLNm5F9rHG2JrelkLg2R-QoMT2DkPY"
-      type="image/x-icon"
-    />
+    <link id="favicon" rel="icon" href="../favicon.ico" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css" />
-    <link rel="stylesheet" href="/cards.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/card.css" />
   </head>
   <body class="mainform">
     <div id="main">
@@ -24,10 +19,12 @@
       </header>
       <main>
         <p id="memo"></p>
+        <hr />
+        <div id="posts"></div>
       </main>
     </div>
-    <script src="h.js"></script>
-
+    <script src="js/client.js"></script>
+    <script src="js/link.js"></script>
     <script>
       const user = window.location.pathname.split("@")[1];
       fetch("/get/users/" + user)
@@ -43,18 +40,16 @@
             $("user").innerText = "User does not exist!";
           }
         });
+      fetch("/get/posts?user="+user)
+        .then(res => res.json())
+        .then(res => {
+          createPosts(res, $("posts"));
+        });
       if (sessionStorage.getItem("viewdoc") == "false") {
         $("back").style.display = "none";
       }
       sessionStorage.setItem("viewdoc", false);
     </script>
-
-    <script src="../link.js"></script>
     <!--         <script src="../cursor.js"></script> -->
-
-    <!-- include the Glitch button to show what the webpage is about and
-            to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js"></script>
   </body>
 </html>
