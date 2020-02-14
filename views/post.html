@@ -1,71 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>New post</title>
+    <title>Loign</title>
     <link id="favicon" rel="icon" href="../favicon.ico" type="image/x-icon" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/loader.css" />
+    <link rel="stylesheet" href="/css/card.css" />
   </head>
   <body>
-    <div class="center">
-      <form id="form" style="min-width:340px;">
-        <h2>Post</h2>
-        <input id="title" type="text" maxlength="100" placeholder="title" />
-        <textarea
-          id="post"
-          placeholder="post"
-          style="border:solid lightgray 1px;border-radius:2px;"
-        ></textarea
-        ><br />Tag:
-        <select id="sub"
-          ><option>Tech</option
-          ><option>News</option
-          ><option>Funny</option></select
-        ><br /><br />
-        <button type="submit" id="submit" class="hotspot">Submit</button>
-        <br /><br /><span id="error"></span>
+    <div id="main">
+      <a href=".." id="back" class="hotspot">Back</a>
+      <main id="post"><div class="loader"></div></main>
+      <hr />
+      <form id="commentForm" class="commentForm">
+        <input id="comment" placeholder="comment..." />
+        <input type="submit" />
       </form>
+      <div id="comments"></div>
     </div>
-    <script src="js/client.js"></script>
-    <script src="js/link.js"></script>
-    <script>
-      $("form").onsubmit = e => {
-        e.preventDefault();
-        const data = {
-          title: $("title").value,
-          post: $("post").value,
-          tag: $("sub").value
-        };
-
-        if (!data.title) {
-          parseError("Title is empty!");
-          return false;
-        }
-
-        if (!data.post) {
-          parseError("There's no post!");
-          return false;
-        }
-
-        fetch("/post/submitPost", {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        })
-          .then(res => res.json())
-          .then(res => {
-            if (!res.error) {
-              goto("..");
-            } else {
-              parseError(res.message);
-            }
-          });
-      };
-    </script>
-
-    <!--         <script src="cursor.js"></script> -->
+    <script src="lib/client.js"></script>
+    <script src="lib/link.js"></script>
+<!--     <script src="lib/cursor.js"></script> -->
+    <script src="js/post.js"></script>
   </body>
 </html>

@@ -47,6 +47,10 @@ app.get("/", (req, res) => {
 });
 
 // http://expressjs.com/en/starter/basic-routing.html
+app.get("/test", (req, res) => {
+  res.sendFile(`${__dirname}/views/test.html`);
+});
+
 app.get("/signup", (req, res) => {
   res.sendFile(`${__dirname}/views/signup.html`);
 });
@@ -60,8 +64,12 @@ app.get("/edit", (req, res) => {
   res.sendFile(`${__dirname}/views/edit.html`);
 });
 
-app.get("/card", (req, res) => {
+app.get("/t/card", (req, res) => {
   res.sendFile(`${__dirname}/templates/card.html`);
+});
+
+app.get("/t/comment", (req, res) => {
+  res.sendFile(`${__dirname}/templates/comment.html`);
 });
 
 app.get("/user", (req, res) => {
@@ -87,7 +95,7 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/post", (req, res) => {
-  res.sendFile(`${__dirname}/views/post.html`);
+  res.sendFile(`${__dirname}/views/new.html`);
 });
 
 app.get("/@:user", (req, res) => {
@@ -98,6 +106,10 @@ app.get("/~:sub", (req, res) => {
   res.sendFile(`${__dirname}/views/sub.html`);
 });
 
+app.get("/-:post", (req, res) => {
+  res.sendFile(`${__dirname}/views/post.html`);
+});
+
 app.get("/get/users/:user", (req, res) => {
   var data = {};
   data.user = req.params.user;
@@ -105,7 +117,6 @@ app.get("/get/users/:user", (req, res) => {
     "SELECT status, joined FROM Users WHERE username=?",
     [data.user],
     (err, row) => {
-      console.log(err + "\n" + row);
       if (!err) {
         if (row) {
           data.status = row.status;
@@ -146,7 +157,6 @@ app.get("/get/posts/:sub", (req, res) => {
     "SELECT * FROM Posts WHERE (tag=? AND by LIKE ?) ORDER BY id DESC LIMIT ? OFFSET ?",
     [data.sub, user, limit, offset],
     (err, row) => {
-      console.log(row);
       if (!err) {
         if (row) {
           res.send(row);
@@ -179,6 +189,13 @@ app.get("/get/posts/", (req, res) => {
     }
   );
 });
+app.get("/get/post/:id", (req, res) => {
+  db.get("SELECT * FROM Posts WHERE id=?", [req.params.id], (err, row) => {
+    if (!err) {
+      res.send(row);
+    }
+  });
+});
 
 app.post("/post/submitPost", (req, res) => {
   console.log(`Submit new post ${req.body.title}`);
@@ -210,6 +227,41 @@ app.post("/post/submitPost", (req, res) => {
       res.send({ message: "No user!", error: true });
     }
   }
+});
+
+app.post("/post/comment", (req, res) => {
+  var data = {
+    comment: req.body.comment,
+    id: req.body.id,
+    by: req.cookies.user,
+    date:new Date()
+  };
+  if (req.cookies.user && allowWrite) {
+    db.get("SELECT (comments) FROM Posts WHERE id=?", [data.id], (err, row) => {
+      if (!err) {
+        console.log(row);
+        if (row.comments == null) {
+          console.log("first");
+          db.run("UPDATE Posts SET comments=? WHERE id=?", [
+            "[" + JSON.stringify(data) + "]",
+            data.id
+          ]);
+        } else {
+          var com = JSON.parse(row.comments);
+          com.push(data);
+          console.log(com);
+          db.run("UPDATE Posts SET comments=? WHERE id=?", [
+            JSON.stringify(com),
+            data.id
+          ]);
+          console.log(data);
+        }
+      } else {
+        console.log(err);
+      }
+    });
+  }
+  res.send("hi");
 });
 
 app.post("/user/addUser", (req, res) => {

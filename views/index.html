@@ -8,9 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/loader.css" />
     <link rel="stylesheet" href="/css/card.css" />
   </head>
-  <body onbeforeunload="update();">
+  <body>
     <div id="main">
       <div class="settings">
         <div class="userprefs empty">
@@ -35,52 +36,15 @@
       <button id="newpost" class="empty" onclick="goto('post')">
         New post
       </button>
-      <div id="posts"></div>
+      <div id="posts">
+      <div class="loader">  
+        </div>
+      </div>
     </div>
 
-    <script src="js/client.js"></script>
-    <script src="js/link.js"></script>
-    <!--     <script src="cursor.js"></script> -->
-    <script>
-      const makeHotspot = e => {
-        document.getElementById(e).classList.add("hotspot");
-      };
-
-      function logout() {
-        fetch("logout").then(() => {
-          location.reload();
-        });
-      }
-
-      const userprefs = document.getElementsByClassName("userprefs")[0];
-      const anonprefs = document.getElementsByClassName("anonprefs")[0];
-      fetch("/user")
-        .then(e => e.json())
-        .then(user => {
-          console.log(user);
-          if (user.user) {
-            console.log("/u/" + user.user);
-            userprefs.style.display = "flex";
-            $("newpost").style.display = "block";
-            $("viewdoc").href = "/@" + user.user;
-            $("header").innerText = `Welcome, ${user.user}!`;
-            document.title = "Welcome, " + user.user + "!";
-            makeHotspot("edit");
-            makeHotspot("viewdoc");
-            makeHotspot("logout");
-          } else {
-            anonprefs.style.display = "flex";
-            makeHotspot("login");
-            makeHotspot("signup");
-          }
-        });
-
-      fetch("/get/posts")
-        .then(res => res.json())
-        .then(res => {
-          createPosts(res, $("posts"));
-          initScroll("",$("posts"));
-        });
-    </script>
+    <script src="lib/client.js"></script>
+    <script src="lib/link.js"></script>
+<!--     <script src="lib/cursor.js"></script> -->
+    <script src="js/index.js"></script>
   </body>
 </html>

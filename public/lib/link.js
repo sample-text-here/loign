@@ -3,7 +3,7 @@ var links = document.querySelectorAll("a");
 var buttons = document.querySelectorAll("button");
 var isBtnClicked = true;
 var x, y;
-setInterval(() => {
+setInterval(function() {
   links = document.querySelectorAll("a");
   buttons = document.querySelectorAll("button");
 }, 100);

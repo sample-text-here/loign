@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/loader.css" />
     <link rel="stylesheet" href="/css/card.css" />
   </head>
   <body>
@@ -16,27 +17,11 @@
       <header>
         <h1 id="title"></h1>
       </header>
-      <main id="posts"></main>
+      <main id="posts"><div class="loader"></div></main>
     </div>
-    <script src="../js/client.js"></script>
-    <script src="../js/link.js"></script>
-    <script>
-      const sub = window.location.pathname.split("~")[1];
-      console.log(sub);
-      if (sub) {
-        fetch("/get/posts/"+sub)
-          .then(res => res.json())
-          .then(res => {
-            createPosts(res, $("posts"));
-          });
-        $("title").innerText = sub;
-        document.title = "loign | " + sub;
-        initScroll();
-      } else {
-        document.title = "loign";
-        $("title").innerText = 'No posts with tag "' + sub + '"!';
-      }
-    </script>
-    <!--     <script src="../cursor.js"></script> -->
+    <script src="lib/client.js"></script>
+    <script src="lib/link.js"></script>
+<!--     <script src="lib/cursor.js"></script> -->
+    <script src="sub.js"></script>
   </body>
 </html>
