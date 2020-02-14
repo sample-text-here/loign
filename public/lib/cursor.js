@@ -17,8 +17,8 @@ linkstyle.innerHTML = `
 }
 
 .outerCursor {
-  width: 2.5em;
-  height: 2.5em;
+  width: 2em;
+  height: 2em;
   border: solid cornflowerblue 1px;
 }
 
@@ -27,13 +27,13 @@ linkstyle.innerHTML = `
   cursor: none;
 }
 `;
-document.head.appendChild(linkstyle);
 
 var innerCursor = document.createElement("div");
 var outerCursor = document.createElement("div");
 innerCursor.className = "innerCursor cursor";
 outerCursor.className = "outerCursor cursor";
 if (window.innerWidth > 820) {
+  document.head.appendChild(linkstyle);
   document.body.appendChild(innerCursor);
   document.body.appendChild(outerCursor);
 }
@@ -81,6 +81,8 @@ const initCursor = () => {
       ) {
         stuck = false;
         stuckon = null;
+        outerCursor.style.width = "2em";
+        outerCursor.style.height = "2em";
       }
     }
     for (var i = 0; i < hotspots.length; i++) {
@@ -90,6 +92,8 @@ const initCursor = () => {
         curY = (curY * 3 + el.top + el.height / 2) / 4;
         stuck = true;
         stuckon = hotspots[i];
+        outerCursor.style.width = "3em";
+        outerCursor.style.height = "3em";
       }
     }
     innerCursor.style.top = `${clientY}px`;

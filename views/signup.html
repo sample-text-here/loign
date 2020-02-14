@@ -37,53 +37,10 @@
         Already have an account? <a href="login" class="hotspot">Login</a>
       </form>
     </div>
-    <script src="js/client.js"></script>
-    <script src="js/link.js"></script>
-    <script>
-      $("form").onsubmit = e => {
-        e.preventDefault();
+    <script src="lib/client.js"></script>
+    <script src="lib/link.js"></script>
+<!--     <script src="lib/cursor.js"></script> -->
+    <script src="js/signup.js"></script>
 
-        const data = {
-          username: $("username").value,
-          password: $("password").value,
-          confpass: $("confpass").value
-        };
-
-        if (!data.username) {
-          parseError("Username is empty!");
-          return false;
-        }
-
-        if (!data.password) {
-          parseError("Password is empty!");
-          return false;
-        }
-
-        if (data.password != data.confpass) {
-          parseError("Passwords do not match!");
-          return false;
-        }
-
-        fetch("/user/addUser", {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        })
-          .then(res => res.json())
-          .then(res => {
-            if (!res.error) {
-              goto("..");
-            } else {
-              parseError(res.message);
-            }
-          });
-      };
-
-      function parseError(e) {
-        $("error").innerText = e;
-      }
-    </script>
-
-    <!--     <script src="cursor.js"></script> -->
   </body>
 </html>

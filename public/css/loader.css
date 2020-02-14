@@ -1,0 +1,45 @@
+.loader {
+  height: 50px;
+  width: 50px;
+  background: transparent;
+  border: solid black 5px;
+  border-top: solid transparent 5px;
+  border-bottom: solid transparent 5px;
+  border-radius: 50%;
+  animation: fetch 1.2s cubic-bezier(0.68, -0.25, 0.265, 1.25) infinite
+    forwards;
+  margin:auto;
+}
+
+
+.loader::after,
+.loader::before {
+  content: "";
+  display: block;
+  position: relative;
+  height: 0;
+  width: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid black;
+  border-bottom: 10px solid transparent;
+}
+
+.loader::after {
+  top: 50%;
+  left: 50%;
+  transform:rotate(45deg) translate(-5px,-5px);
+}
+
+.loader::before {
+  transform:rotate(-135deg) translate(5px,10px);
+}
+
+@keyframes fetch {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}

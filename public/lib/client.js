@@ -1,5 +1,5 @@
 const $ = e => document.getElementById(e);
-var scroll = 10;
+var scroll = 0;
 
 function timeSince(date) {
   var seconds = Math.floor((new Date() - date) / 1000);
@@ -37,20 +37,24 @@ function timeSince(date) {
 }
 
 function createPosts(sub, el) {
-  fetch("/card/")
+  fetch("/t/card/")
     .then(res => res.text())
     .then(res => {
+    console.log(sub);
       if (sub.length > 0) {
-        for (var i = 0; i < res.length; i++) {
+        for (var i = 0; i < sub.length; i++) {
           var build = [
+            sub[i].id,
+            cleanStr(sub[i].by),
             cleanStr(sub[i].by),
             cleanStr(sub[i].title),
             timeSince(sub[i].date),
             cleanStr(sub[i].post),
-            '"/~' + sub[i].tag + '"',
+            sub[i].tag,
             sub[i].tag
           ];
           el.innerHTML += buildTemplate(res, build);
+          scroll++;
         }
       }
     });
@@ -72,15 +76,20 @@ function parseError(e) {
   $("error").innerText = e;
 }
 
-function initScroll(sub, el) {
+function initScroll(sub, el, options={}) {
+  if (options.user) {
+    options.user="&user="+options.user;
+  } else {
+    options.user="";
+  }
   window.addEventListener("scroll", () => {
     if (window.scrollY > document.documentElement.clientHeight - 200) {
-      fetch("/get/posts/" + sub+"?limit=3&offset="+scroll)
+      fetch("/get/posts/" + sub + "?limit=3&offset=" + scroll+options.user)
         .then(res => res.json())
         .then(e => {
           createPosts(e, el);
         });
-      scroll+=3;
+      scroll += 3;
     }
   });
 }
