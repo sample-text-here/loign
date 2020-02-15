@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>404!</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <style>
+      #err {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3em;
+        color: var(--background);
+        text-align:center;
+      }
+
+      #z {
+        position: relative;
+        animation: float 2s infinite;
+      }
+      #text::before,
+      #text::after {
+        color: var(--background);
+        content: "4";
+        position: relative;
+        animation: float 2s infinite;
+      }
+      
+      #z {
+        animation-delay: -0.1s;
+      }
+      
+      #text::after {
+        animation-delay: -0.2s;
+      }
+      
+      #code {
+        position:relative;
+        top:-5vh;
+        font-size:0.5em;
+      }
+
+      @keyframes float {
+        0% {
+          top: -5vh;
+        }
+        50% {
+          top: 5vh;
+        }
+        100% {
+          top: -5vh;
+        }
+      }
+    </style>
+  </head>
+  <body lang="en">
+    <div id="err">
+      <h1 id="text"><span id="z">0</span></h1>
+      <span id="code">not found</span>
+    </div>
+  </body>
+</html>

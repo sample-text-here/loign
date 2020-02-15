@@ -1,35 +1,36 @@
 const id = window.location.pathname.split("-")[1];
 if (id) {
+  fetch("/user")
+    .then(r => r.json())
+    .then(u => {
+      username = u.user;
+    });
   fetch("/get/post/" + id)
     .then(res => res.json())
     .then(res => {
       fetch("/t/card")
         .then(res => res.text())
         .then(card => {
-          $("post").innerHTML = buildTemplate(card, [
-            res.id,
-            res.by,
-            res.by,
-            res.title,
-            timeSince(res.date),
-            res.post,
-            res.tag,
-            res.tag
-          ]);
+          if (res.votes == null || !res.votes) {
+            res.votes = "0";
+          }
+          $("post").innerHTML = buildTemplate(card, getCardStruct(res));
         });
       document.title = res.title;
       res.comments = JSON.parse(res.comments).reverse();
-
-      fetch("/t/comment")
-        .then(res => res.text())
-        .then(com => {
-          for (var i = 0; i < res.comments.length; i++) {
-            $("comments").innerHTML += buildTemplate(com, [
-              res.comments[i].by,
-              res.comments[i].comment
-            ]);
-          }
-        });
+      if (res.comments != null) {
+        fetch("/t/comment")
+          .then(c => c.text())
+          .then(com => {
+            for (var i = 0; i < res.comments.length; i++) {
+              $("comments").innerHTML += buildTemplate(com, [
+                res.comments[i].by,
+                res.comments[i].by,
+                res.comments[i].comment
+              ]);
+            }
+          });
+      }
     });
 }
 
@@ -58,6 +59,5 @@ $("commentForm").addEventListener("submit", e => {
       .then(res => {
         location.reload();
       });
-  } else {
   }
 });

@@ -5,6 +5,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const Cookies = require("cookie-parser");
+const favicon = require("express-favicon");
 const app = express();
 const fs = require("fs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,6 +19,7 @@ const allowReset = false;
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static("public"));
+app.use(favicon(`${__dirname}/public/favicon.ico`));
 app.use(Cookies());
 
 // init sqlite db
@@ -32,10 +34,13 @@ db.serialize(() => {
     db.run("DROP TABLE IF EXISTS Users");
     db.run("DROP TABLE IF EXISTS Posts");
     db.run(
-      "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
+      "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT, like TEXT, bad TEXT, profilepic BLOB)"
     );
     db.run(
-      "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT, upers TECT, downers TEXT)"
+      "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT)"
+    );
+    db.run(
+      "CREATE TABLE Sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT expires TEXT)"
     );
     console.log("it is done");
   }
@@ -48,6 +53,7 @@ app.get("/", (req, res) => {
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/test", (req, res) => {
+  db.run("ALTER TABLE Users ADD profilepic BLOB");
   res.sendFile(`${__dirname}/views/test.html`);
 });
 
@@ -200,31 +206,37 @@ app.get("/get/post/:id", (req, res) => {
 app.post("/post/submitPost", (req, res) => {
   console.log(`Submit new post ${req.body.title}`);
   if (allowWrite) {
-    const title = req.body.title;
-    const post = req.body.post;
-    const tag = req.body.tag;
-    const date = new Date();
-    const by = req.cookies.user;
-    if (by) {
-      db.run(
-        `INSERT INTO Posts (title, post, by, date, tag) VALUES (?,?,?,?,?)`,
-        [title, post, by, date, tag],
-        err => {
-          if (err) {
-            console.log(err);
-            console.log("error!");
-            res.send({
-              message: "Something happened, please try again",
-              error: true
-            });
-          } else {
-            console.log("success");
-            res.send({ message: "success", error: false });
+    if (!req.cookies.posted) {
+      const title = req.body.title;
+      const post = req.body.post;
+      const tag = req.body.tag;
+      const date = new Date();
+      const by = req.cookies.user;
+      if (by) {
+        db.run(
+          `INSERT INTO Posts (title, post, by, date, tag) VALUES (?,?,?,?,?)`,
+          [title, post, by, date, tag],
+          err => {
+            if (err) {
+              console.log(err);
+              console.log("error!");
+              res.send({
+                message: "Something happened, please try again",
+                error: true
+              });
+            } else {
+              console.log("success");
+              res
+                .cookie("posted", true, { maxAge: 60000 })
+                .send({ message: "success", error: false });
+            }
           }
-        }
-      );
+        );
+      } else {
+        res.send({ message: "No user!", error: true });
+      }
     } else {
-      res.send({ message: "No user!", error: true });
+      res.send({ message: "Too many posts!", error: true });
     }
   }
 });
@@ -234,7 +246,7 @@ app.post("/post/comment", (req, res) => {
     comment: req.body.comment,
     id: req.body.id,
     by: req.cookies.user,
-    date:new Date()
+    date: new Date()
   };
   if (req.cookies.user && allowWrite) {
     db.get("SELECT (comments) FROM Posts WHERE id=?", [data.id], (err, row) => {
@@ -264,6 +276,149 @@ app.post("/post/comment", (req, res) => {
   res.send("hi");
 });
 
+app.post("/post/vote/:wat", (req, res) => {
+  var which = req.params.wat;
+  var id = req.body.id;
+  var user = req.cookies.user;
+  var select;
+  if (which == "up") {
+    select = 1;
+  } else {
+    select = -1;
+  }
+  if (req.cookies.user && allowWrite) {
+    db.get("SELECT * FROM Posts WHERE id=?", [id], (err, row) => {
+      if (!err) {
+        if (which == "up") {
+          var opt = "like";
+          var add = "+1";
+        } else {
+          var opt = "bad";
+          var add = "-1";
+        }
+        db.get("SELECT like FROM Users", (err, like) => {
+          db.get("SELECT bad FROM Users", (err, bad) => {
+            if (!err) {
+              var out;
+              if (opt == "like") {
+                out = JSON.parse(like.like);
+              } else {
+                out = JSON.parse(bad.bad);
+              }
+              if (out == null) {
+                let tmp = [];
+                tmp.push(id);
+                tmp = JSON.stringify(tmp);
+                db.run(
+                  `UPDATE Users SET ${opt}=? WHERE username=?`,
+                  [tmp, user],
+                  err => {
+                    if (err) {
+                      res.send({ error: true });
+                    }
+                  }
+                );
+                db.run(
+                  `UPDATE Posts SET votes=0${add} WHERE id=?`,
+                  [id],
+                  err => {
+                    if (err) {
+                      res.send({ error: true });
+                    }
+                  }
+                );
+              } else {
+                var tmp = out;
+                if (out.indexOf(id) == -1) {
+                  tmp.push(id);
+                  db.run(
+                    `UPDATE Posts SET votes=votes${add} WHERE id=?`,
+                    [id],
+                    err => {
+                      if (err) {
+                        res.send({ error: true });
+                      }
+                    }
+                  );
+                } else {
+                  select = 0;
+                  tmp.splice(tmp.indexOf(id), 1);
+                  if (add == "+1") {
+                    add = "-1";
+                  } else {
+                    add = "+1";
+                  }
+                  db.run(
+                    `UPDATE Posts SET votes=votes${add} WHERE id=?`,
+                    [id],
+                    err => {
+                      if (err) {
+                        res.send({ error: true });
+                      }
+                    }
+                  );
+                }
+                tmp = JSON.stringify(tmp);
+                db.run(
+                  `UPDATE Users SET ${opt}=? WHERE username=?`,
+                  [tmp, user],
+                  err => {
+                    if (err) {
+                      res.send({ error: true });
+                    }
+                  }
+                );
+              }
+              if (opt == "like") {
+                if (bad.bad != null) {
+                  var tmp = JSON.parse(bad.bad);
+                  if (tmp.indexOf(id) != -1) {
+                    db.run(
+                      `UPDATE Users SET bad=? WHERE username=?`,
+                      [tmp.splice(tmp, 1), user],
+                      err => {
+                        if (err) {
+                          res.send({ error: true });
+                        }
+                      }
+                    );
+                  }
+                }
+              } else {
+                if (like.like != null) {
+                  var tmp = JSON.parse(like.like);
+                  if (tmp.indexOf(id) != -1) {
+                    db.run(
+                      `UPDATE Users SET like=? WHERE username=?`,
+                      [tmp.splice(tmp, 1), user],
+                      err => {
+                        if (err) {
+                          res.send({ error: true });
+                        }
+                      }
+                    );
+                  }
+                }
+              }
+              db.get("SELECT votes FROM Posts WHERE id=?", [id], (err, row) => {
+                if (!err) {
+                  res.send({ error: false, votes: row.votes, select: select });
+                } else {
+                  res.send({ error: true });
+                }
+              });
+            } else {
+              res.send({ error: true });
+            }
+          });
+        });
+      } else {
+        res.send({ error: true });
+      }
+    });
+  }
+});
+
 app.post("/user/addUser", (req, res) => {
   console.log(`add to new user ${req.body}`);
   if (allowWrite) {
@@ -290,7 +445,7 @@ app.post("/user/addUser", (req, res) => {
               } else {
                 console.log("success");
                 res
-                  .cookie("user", user, { maxAge: 600000 })
+                  .cookie("user", user, { maxAge: 1800000 })
                   .send({ message: "success", error: false });
               }
             }
@@ -480,10 +635,10 @@ app.get("/reset", (req, res) => {
       db.run("DROP TABLE IF EXISTS Users");
       db.run("DROP TABLE IF EXISTS Posts");
       db.run(
-        "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT)"
+        "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT, like TEXT, bad TEXT, profilepic BLOB)"
       );
       db.run(
-        "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT, upers TECT, downers TEXT)"
+        "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT)"
       );
       db.run(
         "CREATE TABLE Sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT expires TEXT)"
@@ -503,7 +658,7 @@ const cleanseString = function(string) {
 };
 
 app.use(function(req, res) {
-  res.status(404).send("404!");
+  res.status(404).sendFile(`${__dirname}/views/404.html`);
 });
 
 // listen for requests :)
