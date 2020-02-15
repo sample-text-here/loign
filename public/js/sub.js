@@ -1,5 +1,10 @@
 const sub = window.location.pathname.split("~")[1];
 console.log(sub);
+fetch("/user")
+  .then(r => r.json())
+  .then(u => {
+    username = u.user;
+  });
 if (sub) {
   fetch("/get/posts/" + sub)
     .then(res => res.json())
@@ -9,8 +14,9 @@ if (sub) {
         $("title").innerText = sub;
         document.title = "loign | " + sub;
         $("posts").innerHTML = "";
-        initScroll();
         createPosts(res, $("posts"));
+
+        initScroll("/get/posts/" + sub, $("posts"));
       } else {
         noSub();
       }

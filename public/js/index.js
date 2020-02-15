@@ -14,19 +14,15 @@ fetch("/user")
   .then(e => e.json())
   .then(user => {
     if (user.user) {
+      username = user.user;
       console.log("/u/" + user.user);
       userprefs.style.display = "flex";
       $("newpost").style.display = "block";
       $("viewdoc").href = "/@" + user.user;
       $("header").innerText = `Welcome, ${user.user}!`;
       document.title = "Welcome, " + user.user + "!";
-      makeHotspot("edit");
-      makeHotspot("viewdoc");
-      makeHotspot("logout");
     } else {
       anonprefs.style.display = "flex";
-      makeHotspot("login");
-      makeHotspot("signup");
     }
     next();
   });
@@ -37,6 +33,6 @@ function next() {
     .then(res => {
       $("posts").innerHTML = "";
       createPosts(res, $("posts"));
-      initScroll("", $("posts"));
+      initScroll("/get/posts/", $("posts"));
     });
 }

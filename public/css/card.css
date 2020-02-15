@@ -16,10 +16,14 @@
 .card .side {
   flex-grow:1; 
   text-align:center;
+  cursor:auto;
 }
-.card .side button {
+
+.card .side label {
   font-weight:bold;
   width:100%;
+  font-size:1.5em;
+  cursor:pointer;
 }
 
 .card .main {
@@ -39,8 +43,7 @@
 }
 
 .card .by {
-  color: #0000ee;
-  background:white;
+/*   color: var(--accent1); */
 }
 
 .commentForm {
@@ -59,4 +62,16 @@
 
 #comment {
   flex-grow:3;
+}
+
+.card .side input {
+  display:none;
+}
+
+.card .side .up:checked~label[for^="up"]{
+  color:var(--accent2);
+}
+
+.card .side .down:checked~label[for^="down"]{
+  color:var(--accent2);
 }

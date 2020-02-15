@@ -9,7 +9,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "sqlite3": "^4.1.1",
-    "cookie-parser": "^1.4.4"
+    "cookie-parser": "^1.4.4",
+    "express-favicon": "^2.0.1"
   },
   "engines": {
     "node": "10.x"

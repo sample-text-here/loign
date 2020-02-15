@@ -9,16 +9,19 @@
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/css/style.css" />
   </head>
-  <body class="mainform">
-    <div class="edit">
+  <body lang="en">
+    <div id="main">
       <h1>Edit</h1>
       <a href="..">Back</a>
       <hr />
       <h2>Update bio</h2>
       <textarea id="status" placeholder="Hello"></textarea>
       <hr />
+      <h2>Change profile picture</h2>
+      <input type="file">
+      <hr />
       <h2>Change password</h2>
-      <form id="form">
+      <form id="form" style="box-shadow:none;border:solid black 2px;">
         <input
           id="oldpass"
           type="password"
@@ -55,7 +58,7 @@
     </div>
     <script src="lib/client.js"></script>
     <script src="lib/link.js"></script>
-<!--     <script src="lib/cursor.js"></script> -->
+    <!--     <script src="lib/cursor.js"></script> -->
     <script src="js/edit.js"></script>
   </body>
 </html>
