@@ -82,12 +82,20 @@ app.get("/user", (req, res) => {
   var data = req.cookies;
   if (data.user) {
     db.get(
-      "SELECT status, joined FROM Users WHERE username=?",
+      "SELECT status, joined, like, bad FROM Users WHERE username=?",
       [data.user],
       (err, row) => {
         if (!err) {
           if (row) {
             data.status = row.status;
+            data.like = row.like;
+            data.bad = row.bad;
+          }
+          if (data.like == null) {
+            data.like = "[]";
+          }
+          if (data.bad == null) {
+            data.bad = "[]";
           }
           res.send(data);
         }

@@ -64,7 +64,7 @@
   flex-grow:3;
 }
 
-.card .side input {
+.card .side input[type="checkbox"] {
   display:none;
 }
 

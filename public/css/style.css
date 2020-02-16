@@ -1,10 +1,11 @@
 /* styles */
 /* called by your view template */
 :root {
-  --accent1:#81d4fa;
+  --accent1: #81d4fa;
   --accent2: #05a8f4;
-  --foreground:black;
-  --background:white;
+  --foreground: black;
+  --background: white;
+  --note: #444;
 }
 
 * {
@@ -55,17 +56,20 @@ input {
   font-size: 16px;
 }
 
+
 button {
   font-size: 1em;
-  border: solid var(--foreground) 2px;
+  border: solid var(--accent2) 2px;
   border-radius: 3px;
   background-color: var(--background);
   cursor: pointer;
+  color:var(--note);
   transition: all 0.2s;
 }
 
 button:hover {
-  background-color: lightgray;
+  background-color: var(--accent2);
+  color:var(--background);
 }
 
 li {
@@ -75,7 +79,7 @@ li {
 footer {
   margin-top: 50px;
   padding-top: 25px;
-  border-top: 1px solid lightgrey;
+  border-top: 1px solid var(--note);
 }
 
 a {
@@ -103,13 +107,23 @@ hr {
   color: red;
 }
 
+#warnbtn {
+  border-color:red;
+  color:red;
+}
+
+#warnbtn:hover {
+  background-color:red;
+  color:var(--background);
+}
+
 textarea {
   min-width: 100%;
   max-width: 100%;
   min-height: 240px;
   height: 100%;
   padding: 1em;
-  border: solid lightgray 1px;
+  border: solid var(--note) 1px;
   border-radius:2px;
 }
 
@@ -119,7 +133,7 @@ textarea {
 
 #main {
   min-height: 100vh;
-  background: white;
+  background: var(--background);
   max-width: 80vw;
   margin: auto;
   padding: 1em;
@@ -143,7 +157,7 @@ textarea {
 }
 
 .italic {
-  color:#444;
+  color:var(--note);
   font-style:italic;
 }
 

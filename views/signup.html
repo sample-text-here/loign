@@ -8,29 +8,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/form.css" />
   </head>
   <body lang="en">
     <div class="center">
-      <form id="form">
+      <form id="form" autocomplete="off">
         <h2>Signup</h2>
-        <input
-          id="username"
-          type="text"
-          maxlength="100"
-          placeholder="username"
-        />
-        <input
-          id="password"
-          type="password"
-          maxlength="100"
-          placeholder="password"
-        />
-        <input
-          id="confpass"
-          type="password"
-          maxlength="100"
-          placeholder="confirm password"
-        />
+        <div class="group">
+          <input id="username" type="text" placeholder=" " maxlength="100" />
+          <span class="bar"></span>
+          <label>username</label>
+        </div>
+        <div class="group">
+          <input
+            id="password"
+            type="password"
+            placeholder=" "
+            maxlength="100"
+          />
+          <span class="bar"></span>
+          <label>password</label>
+        </div>
+        <div class="group">
+          <input
+            id="confpass"
+            type="password"
+            placeholder=" "
+            maxlength="100"
+          />
+          <span class="bar"></span>
+          <label>confirm password</label>
+        </div>
+
         <button type="submit" id="submit" class="hotspot">Submit</button>
         <br /><br /><span id="error"></span>
         <hr />
@@ -39,8 +48,7 @@
     </div>
     <script src="lib/client.js"></script>
     <script src="lib/link.js"></script>
-<!--     <script src="lib/cursor.js"></script> -->
+    <!--     <script src="lib/cursor.js"></script> -->
     <script src="js/signup.js"></script>
-
   </body>
 </html>

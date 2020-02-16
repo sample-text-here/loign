@@ -46,27 +46,46 @@ function timeSince(date) {
 }
 
 function createPosts(sub, el) {
-  fetch("/t/card/")
-    .then(res => res.text())
-    .then(res => {
-      if (sub.length > 0) {
-        for (var i = 0; i < sub.length; i++) {
-          var build = getCardStruct(sub[i]);
-          el.innerHTML += buildTemplate(res, getCardStruct(sub[i]));
-          scroll++;
-        }
-      }
+  fetch("/user")
+    .then(res => res.json())
+    .then(user => {
+      fetch("/t/card/")
+        .then(res => res.text())
+        .then(res => {
+          if (sub.length > 0) {
+            for (var i = 0; i < sub.length; i++) {
+              var build = getCardStruct(sub[i], user);
+              el.innerHTML += buildTemplate(res, build);
+              scroll++;
+            }
+          }
+        });
     });
 }
 
-function getCardStruct(obj) {
+function getCardStruct(obj, user = undefined) {
+  ckbx = ["", ""];
   if (obj.votes == null || !obj.votes) {
     obj.votes = "0";
   }
+  if (user) {
+    ckbx[0] = JSON.parse(user.like).indexOf(obj.id);
+    if (ckbx[0] == -1) {
+      ckbx[0] = "";
+    } else {
+      ckbx[0] = "checked";
+    }
+    ckbx[1] = JSON.parse(user.bad).indexOf(obj.id);
+    if (ckbx[1] == -1) {
+      ckbx[1] = "";
+    } else {
+      ckbx[1] = "checked";
+    }
+  }
   return [
-    "",
+    ckbx[0],
     obj.id + "",
-    "",
+    ckbx[1],
     obj.id + "",
     obj.id + "",
     obj.id + "",
