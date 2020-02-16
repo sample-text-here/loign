@@ -68,7 +68,7 @@ function getCardStruct(obj, user = undefined) {
   if (obj.votes == null || !obj.votes) {
     obj.votes = "0";
   }
-  if (user) {
+  if (user.like&&user.bad) {
     ckbx[0] = JSON.parse(user.like).indexOf(obj.id);
     if (ckbx[0] == -1) {
       ckbx[0] = "";
