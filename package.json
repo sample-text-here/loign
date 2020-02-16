@@ -6,7 +6,7 @@
   "scripts": {
     "start": "babel server.js > es5.js && node es5.js",
     "run":"node es5.js",
-    "build": "babel server.js > es5.js"
+    "build": "babel server.js > es5.js",
     "start": "babel server.js"
   },
   "dependencies": {
