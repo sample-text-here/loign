@@ -7,6 +7,7 @@
     "start": "babel server.js > es5.js && node es5.js",
     "run":"node es5.js",
     "build": "babel server.js > es5.js"
+    "start": "babel server.js"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -16,6 +17,9 @@
     "express-favicon": "^2.0.1",
     "sqlite3": "^4.1.1",
     "body-parser": "^1.19.0"
+    "cookie-parser": "^1.4.4",
+    "express-favicon": "^2.0.1",
+    "babel-cli": "^6.26.0"
   },
   "engines": {
     "node": "10.x"
