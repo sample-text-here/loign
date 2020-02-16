@@ -1,0 +1,67 @@
+input[type="text"]:-webkit-autofill,
+input[type="text"],
+input[type="password"]:-webkit-autofill,
+input[type="password"] {
+  box-shadow: 100vw 0 var(--background) inset;
+  outline: none;
+  border: none;
+}
+
+.group {
+  position: relative;
+  margin: 1.5em 0;
+}
+
+input:focus ~ label,
+input:not(:placeholder-shown) ~ label {
+  top: -1em;
+  font-size: 0.8em;
+  color: var(--accent2);
+}
+
+input:focus ~ .bar:before {
+  width: 100%;
+}
+
+input:not(:focus) ~ .bar:after {
+  width: 100%;
+}
+
+input[type="password"] {
+  letter-spacing: 0.2em;
+}
+
+label {
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 0;
+  color: var(--note);
+  transition: 300ms ease all;
+}
+
+.bar {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.bar:before,
+.bar:after {
+  content: "";
+  height: 2px;
+  width: 0;
+  bottom: calc(1em - 3px);
+  position: absolute;
+  transition: 300ms ease all;
+}
+
+.bar:before {
+  background: var(--accent2);
+  left: 0%;
+}
+
+.bar:after {
+  background: #ccc;
+  right: 0;
+}
