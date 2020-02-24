@@ -1,25 +1,23 @@
 {
   "name": "loign",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Log in and log out again",
   "main": "server.js",
   "scripts": {
-    "start": "babel server.js > es5.js && node es5.js",
-    "run":"node es5.js",
-    "build": "babel server.js > es5.js",
-    "start": "babel server.js"
+    "start": "node server.js",
+    "run": "node es5.js",
+    "build": "babel server.js > es5.js"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
+    "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",
+    "express-fileupload": "^1.1.6",
     "sqlite3": "^4.1.1",
-    "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.4",
-    "express-favicon": "^2.0.1",
-    "babel-cli": "^6.26.0"
+    "jimp": "^0.9.3"
   },
   "engines": {
     "node": "10.x"

@@ -4,7 +4,7 @@ fetch("/user")
   .then(u => {
     username = u.user;
   });
-fetch("/get/users/" + user)
+fetch("/get/user/" + user)
   .then(e => e.json())
   .then(res => {
     if (res.joined) {
@@ -23,3 +23,5 @@ fetch("/get/posts?user=" + user)
     createPosts(res, $("posts"));
     initScroll("/get/posts?user=" + user, $("posts"));
   });
+
+$("pic").src="/get/userpic/"+user;

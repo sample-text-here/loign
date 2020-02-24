@@ -6,9 +6,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const Cookies = require("cookie-parser");
 const favicon = require("express-favicon");
+const fileUpload = require("express-fileupload");
+const Jimp = require("jimp");
 const app = express();
 const fs = require("fs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload());
 app.use(bodyParser.json());
 
 const allowWrite = true;
@@ -34,7 +37,7 @@ db.serialize(() => {
     db.run("DROP TABLE IF EXISTS Users");
     db.run("DROP TABLE IF EXISTS Posts");
     db.run(
-      "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT, like TEXT, bad TEXT, profilepic BLOB)"
+      "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT, like TEXT, bad TEXT, pic TEXT)"
     );
     db.run(
       "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT)"
@@ -53,7 +56,6 @@ app.get("/", (req, res) => {
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/test", (req, res) => {
-  db.run("ALTER TABLE Users ADD profilepic BLOB");
   res.sendFile(`${__dirname}/views/test.html`);
 });
 
@@ -61,7 +63,6 @@ app.get("/signup", (req, res) => {
   res.sendFile(`${__dirname}/views/signup.html`);
 });
 
-// http://expressjs.com/en/starter/basic-routing.html
 app.get("/login", (req, res) => {
   res.sendFile(`${__dirname}/views/login.html`);
 });
@@ -112,6 +113,10 @@ app.get("/post", (req, res) => {
   res.sendFile(`${__dirname}/views/new.html`);
 });
 
+app.get("/get/null", (req, res) => {
+  res.sendFile(`${__dirname}/assets/null.png`);
+});
+
 app.get("/@:user", (req, res) => {
   res.sendFile(`${__dirname}/views/user.html`);
 });
@@ -124,7 +129,7 @@ app.get("/-:post", (req, res) => {
   res.sendFile(`${__dirname}/views/post.html`);
 });
 
-app.get("/get/users/:user", (req, res) => {
+app.get("/get/user/:user", (req, res) => {
   var data = {};
   data.user = req.params.user;
   db.get(
@@ -140,6 +145,21 @@ app.get("/get/users/:user", (req, res) => {
       }
     }
   );
+});
+
+app.get("/get/userpic/:user", (req, res) => {
+  const user = req.params.user;
+  db.get("SELECT * FROM Users WHERE username=?", [user], (err, row) => {
+    if (!err && row) {
+      if (row.pic) {
+        res.sendFile(`${__dirname}/assets/users/${user}.${row.pic}`);
+      } else {
+        res.sendFile(`${__dirname}/assets/null.png`);
+      }
+    } else {
+      res.sendFile(`${__dirname}/assets/null.png`);
+    }
+  });
 });
 
 app.get("/get/users/", (req, res) => {
@@ -453,7 +473,7 @@ app.post("/user/addUser", (req, res) => {
               } else {
                 console.log("success");
                 res
-                  .cookie("user", user, { maxAge: 1800000 })
+                  .cookie("user", user, { maxAge: 3600000 })
                   .send({ message: "success", error: false });
               }
             }
@@ -490,7 +510,7 @@ app.post("/user/login", (req, res) => {
               if (row.password == pass) {
                 console.log("success");
                 res
-                  .cookie("user", user, { maxAge: 600000 })
+                  .cookie("user", user, { maxAge: 3600000 })
                   .send({ message: "success", error: false });
               } else {
                 console.log("incorrect password");
@@ -599,7 +619,6 @@ app.post("/user/updatePass", (req, res) => {
 app.post("/user/updateStatus", (req, res) => {
   if (allowWrite) {
     const user = req.cookies.user;
-    // const status = cleanseString(req.body.status);
     const status = req.body.status;
     console.log("Update user status: " + user + " to " + status);
     if (user) {
@@ -637,13 +656,61 @@ app.post("/user/updateStatus", (req, res) => {
   }
 });
 
+app.post("/edit/photo", (req, res) => {
+  if (allowWrite) {
+    const user = req.cookies.user;
+
+    if (user) {
+      if (!req.files || Object.keys(req.files).length === 0) {
+        console.log("error");
+        console.log(req.files);
+        return res.status(400).send("No files were uploaded.");
+      }
+      db.get(
+        "SELECT pic FROM Users WHERE username=?",
+        [user],
+        (err, oldrow) => {
+          if (oldrow.pic != null) {
+            fs.unlinkSync(`assets/users/${user}.${oldrow.pic}`);
+          }
+
+          var pic = req.files.pic;
+          var type = pic.mimetype.split("/")[1];
+
+          pic.mv(`assets/users/${user}.${type}`, function(err) {
+            if (err) return res.status(500).send(err);
+            db.run(
+              "UPDATE Users SET pic=? WHERE username=?",
+              [type, user],
+              err => {
+                if (!err) {
+                  res.send("File uploaded!");
+                } else {
+                  res.send(err);
+                }
+              }
+            );
+            Jimp.read(`assets/users/${user}.${type}`, (err, pic) => {
+              if (err) throw err;
+              pic.cover(128, 128).write(`assets/users/${user}.${type}`);
+            });
+          });
+        }
+      );
+    } else {
+      console.log("no signed in user");
+      res.send({ message: "No signed in user", error: true });
+    }
+  }
+});
+
 app.get("/reset", (req, res) => {
   if (allowReset) {
     db.serialize(() => {
       db.run("DROP TABLE IF EXISTS Users");
       db.run("DROP TABLE IF EXISTS Posts");
       db.run(
-        "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT, like TEXT, bad TEXT, profilepic BLOB)"
+        "CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password Text, joined TEXT, status TEXT, like TEXT, bad TEXT, pic TEXT)"
       );
       db.run(
         "CREATE TABLE Posts (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, post Text, by TEXT, date TEXT, tag TEXT, votes INTEGER, comments TEXT)"

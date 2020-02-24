@@ -17,9 +17,19 @@
       <h2>Update bio</h2>
       <textarea id="status" placeholder="Hello"></textarea>
       <hr />
-      <!--<h2>Change profile picture</h2>
-      <input type="file" />
-      <hr />-->
+      <h2>Change profile picture</h2>
+      Current: <img src="x" id="pic" style="max-width:3em;"/><br>
+      <form
+        id="profilepic"
+        action="edit/photo"
+        method="post"
+        enctype="multipart/form-data"
+        style="box-shadow:none;border:solid black 2px;"
+      >
+        <input type="file" name="pic" accept="image/*" />
+        <input type="submit" value="Upload" />
+      </form>
+      <hr />
       <h2>Change password</h2>
       <form id="form" style="box-shadow:none;border:solid black 2px;">
         <input
@@ -52,9 +62,9 @@
         Delete user
       </button>
     </div>
-    <script src="lib/client.js"></script>
-    <script src="lib/link.js"></script>
+    <script src="../lib/client.js"></script>
+    <script src="../lib/link.js"></script>
     <!--     <script src="lib/cursor.js"></script> -->
-    <script src="js/edit.js"></script>
+    <script src="../js/edit.js"></script>
   </body>
 </html>
