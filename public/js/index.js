@@ -31,7 +31,6 @@ function next() {
   fetch("/get/posts")
     .then(res => res.json())
     .then(res => {
-      $("posts").innerHTML = "";
       createPosts(res, $("posts"));
       initScroll("/get/posts/", $("posts"));
     });

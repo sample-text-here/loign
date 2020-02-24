@@ -8,9 +8,11 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var Cookies = require("cookie-parser");
 var favicon = require("express-favicon");
+var fileUpload = require("express-fileupload");
 var app = express();
 var fs = require("fs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload());
 app.use(bodyParser.json());
 
 var allowWrite = true;
@@ -49,7 +51,10 @@ app.get("/", function (req, res) {
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/test", function (req, res) {
-  db.run("ALTER TABLE Users ADD profilepic BLOB");
+  /*
+  db.run("UPDATE Posts SET votes = 0");
+  db.run("UPDATE Users SET like = null");
+  db.run("UPDATE Users SET bad = null");*/
   res.sendFile(__dirname + "/views/test.html");
 });
 
@@ -116,7 +121,7 @@ app.get("/-:post", function (req, res) {
   res.sendFile(__dirname + "/views/post.html");
 });
 
-app.get("/get/users/:user", function (req, res) {
+app.get("/get/user/:user", function (req, res) {
   var data = {};
   data.user = req.params.user;
   db.get("SELECT status, joined FROM Users WHERE username=?", [data.user], function (err, row) {
@@ -128,6 +133,10 @@ app.get("/get/users/:user", function (req, res) {
       res.send(data);
     }
   });
+});
+
+app.get("/get/user/:user/pic", function (req, res) {
+  res.sendFile(__dirname + "/assets/users/" + req.params.user + ".png");
 });
 
 app.get("/get/users/", function (req, res) {
@@ -525,6 +534,39 @@ app.post("/user/updateStatus", function (req, res) {
           console.log("user does not exist");
           res.send({ message: "User does not exist", error: true });
         }
+      });
+    } else {
+      console.log("no signed in user");
+      res.send({ message: "No signed in user", error: true });
+    }
+  }
+});
+
+app.post("/edit/photo", function (req, res) {
+  if (allowWrite) {
+    var user = req.cookies.user;
+
+    if (user) {
+      if (!req.files || Object.keys(req.files).length === 0) {
+        console.log("error");
+        console.log(req.files);
+        return res.status(400).send("No files were uploaded.");
+      }
+
+      // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+      var pic = req.files.pic;
+      var type = pic.mimetype.split("/")[1];
+
+      // Use the mv() method to place the file somewhere on your server
+      pic.mv("assets/users/" + user + "." + type, function (err) {
+        if (err) return res.status(500).send(err);
+        db.run("UPDATE TABLE Users SET profilepic=? WHERE username=?", [type, user], function (err) {
+          if (!err) {
+            res.send("File uploaded!");
+          } else {
+            res.send(err);
+          }
+        });
       });
     } else {
       console.log("no signed in user");

@@ -45,6 +45,7 @@ function timeSince(date) {
   return Math.floor(seconds) + " seconds ago";
 }
 
+var loading = true;
 function createPosts(sub, el) {
   fetch("/user")
     .then(res => res.json())
@@ -52,6 +53,10 @@ function createPosts(sub, el) {
       fetch("/t/card/")
         .then(res => res.text())
         .then(res => {
+          if (loading) {
+            el.innerHTML = "";
+            loading = false;
+          }
           if (sub.length > 0) {
             for (var i = 0; i < sub.length; i++) {
               var build = getCardStruct(sub[i], user);
@@ -68,18 +73,20 @@ function getCardStruct(obj, user = undefined) {
   if (obj.votes == null || !obj.votes) {
     obj.votes = "0";
   }
-  if (user.like&&user.bad) {
-    ckbx[0] = JSON.parse(user.like).indexOf(obj.id);
-    if (ckbx[0] == -1) {
-      ckbx[0] = "";
-    } else {
-      ckbx[0] = "checked";
-    }
-    ckbx[1] = JSON.parse(user.bad).indexOf(obj.id);
-    if (ckbx[1] == -1) {
-      ckbx[1] = "";
-    } else {
-      ckbx[1] = "checked";
+  if (user) {
+    if (user.like && user.bad) {
+      ckbx[0] = JSON.parse(user.like).indexOf(obj.id);
+      if (ckbx[0] == -1) {
+        ckbx[0] = "";
+      } else {
+        ckbx[0] = "checked";
+      }
+      ckbx[1] = JSON.parse(user.bad).indexOf(obj.id);
+      if (ckbx[1] == -1) {
+        ckbx[1] = "";
+      } else {
+        ckbx[1] = "checked";
+      }
     }
   }
   return [
@@ -143,8 +150,11 @@ function cleanStr(string) {
     .replace(/>/g, "&gt;");
 }
 
+var voting = false;
+
 function upvote(id, el) {
-  if (username) {
+  if (username && !voting) {
+    voting = true;
     fetch("/post/vote/up", {
       method: "POST",
       body: JSON.stringify({ id: id }),
@@ -158,13 +168,16 @@ function upvote(id, el) {
         if (!res.error) {
           el.innerText = res.votes;
           checkboxes(res, el);
+          voting = false;
         }
       });
   }
 }
 
 function downvote(id, el) {
-  if (username) {
+  if (username && !voting) {
+    voting = true;
+
     fetch("/post/vote/down", {
       method: "POST",
       body: JSON.stringify({ id: id }),
@@ -178,6 +191,7 @@ function downvote(id, el) {
         if (!res.error) {
           el.innerText = res.votes;
           checkboxes(res, el);
+          voting = false;
         }
       });
   }
@@ -212,4 +226,9 @@ function shortNumber(n) {
   if (n >= 1e3) {
     return Math.floor(n / 1e2) / 10 + "k";
   } else return Math.floor(n * 10) / 10 + "";
+}
+
+function imgErr(img) {
+  img.src = "/get/userpic/@null";
+  img.onerror = "";
 }

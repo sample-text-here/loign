@@ -1,7 +1,8 @@
-fetch("/user")
+fetch("../user")
   .then(e => e.json())
   .then(res => {
     $("status").value = res.status;
+    $("pic").src = "https://loign.glitch.me/get/userpic/" + res.user;
   });
 
 $("form").onsubmit = e => {
@@ -79,3 +80,35 @@ function update() {
       console.log(res);
     });
 }
+/*
+$("profilepic").addEventListener("submit", e => {
+  e.preventDefault();
+  var data = $("profilepic")["file"].files[0];
+  if (data) {
+    var type = data.type.split("/");
+    if (type[0] == "image") {
+      if (data.size <= 30000) {
+        console.log(data);
+        var pic;
+        data.text().then(e => {
+          console.log(e);
+          pic = new Blob([e], { type: "image/" + type[1] });
+          fetch("user/photo", {
+            method: "POST",
+            files: data,
+            headers: { "Content-Type": "application/json" }
+          })
+            .then(res => res.json())
+            .then(res => {
+              console.log(res);
+            });
+        });
+      } else {
+        alert("File too big!");
+      }
+    } else {
+      alert("Not an image!");
+    }
+  }
+});
+*/
