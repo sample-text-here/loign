@@ -4,6 +4,6 @@ Blogging platform? Reddit clone? A game to see who can login the fastest? I don'
 
 (It was supposed to be `login`, but the name was already taken)
 
-## Made ~~with~~ by [Glitch](https://glitch.com/)
+## Made ~~by~~ with [Glitch](https://glitch.com/)
 
 \ ゜ o ゜)ノ
