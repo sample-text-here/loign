@@ -1,12 +1,5 @@
 /* styles */
 /* called by your view template */
-:root {
-  --accent1: #81d4fa;
-  --accent2: #05a8f4;
-  --foreground: black;
-  --background: white;
-  --note: #444;
-}
 
 * {
   box-sizing: border-box;
