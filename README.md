@@ -4,6 +4,10 @@ Blogging platform? Reddit clone? A game to see who can login the fastest? I don'
 
 (It was supposed to be `login`, but the name was already taken)
 
-## Made ~~by~~ with [Glitch](https://glitch.com/)
+### Hey, if you remixed this...
+
+You can edit the tags, color scheme and nothing else in `hconfig.json`
+
+## Made ~~with~~ by [Glitch](https://glitch.com/)
 
 \ ゜ o ゜)ノ

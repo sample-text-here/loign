@@ -1,0 +1,21 @@
+{
+  "colors": {
+    "background": "#ffffff",
+    "foreground": "#000000",
+    "note": "#444",
+    "accent1": "#81d4fa",
+    "accent2": "#05a8f4"
+  },
+  "tags": [
+    "Tech",
+    "News",
+    "Funny",
+    "Help",
+    "Meta",
+    "Other"
+  ],
+  "memes": true,
+  "allowRead":true,
+  "allowWrite":true,
+  "allowReset":false
+}

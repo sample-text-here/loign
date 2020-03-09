@@ -15,7 +15,6 @@ fetch("/user")
   .then(user => {
     if (user.user) {
       username = user.user;
-      console.log("/u/" + user.user);
       userprefs.style.display = "flex";
       $("newpost").style.display = "block";
       $("viewdoc").href = "/@" + user.user;

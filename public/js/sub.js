@@ -15,7 +15,6 @@ if (sub) {
         document.title = "loign | " + sub;
         $("posts").innerHTML = "";
         createPosts(res, $("posts"));
-
         initScroll("/get/posts/" + sub, $("posts"));
       } else {
         noSub();

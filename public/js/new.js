@@ -1,3 +1,10 @@
+fetch("/conf.json")
+  .then(res => res.json())
+  .then(res => {
+    res.tags.forEach(tag => {
+      $("sub").innerHTML += "<option>" + tag + "</option>";
+    });
+  });
 $("form").onsubmit = e => {
   e.preventDefault();
   const data = {

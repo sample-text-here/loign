@@ -1,10 +1,26 @@
 const $ = e => document.getElementById(e);
 var username;
+fetch("/conf.json")
+  .then(res => res.json())
+  .then(res => {
+    var doc = document.documentElement.style;
+    doc.setProperty("--foreground", res.colors.foreground);
+    doc.setProperty("--background", res.colors.background);
+    doc.setProperty("--note", res.colors.note);
+    doc.setProperty("--accent1", res.colors.accent1);
+    doc.setProperty("--accent2", res.colors.accent2);
+    if (res.memes) {
+      console.log(
+        "%c    ",
+        "font-size:300px; background:url(https://loign.glitch.me/assets/meme.png) no-repeat center/100%;"
+      );
+    }
+  });
 const queue = e => {
-  x = setInterval(() => {
+  var x = setInterval(() => {
     if (e) {
       e();
-      delete x;
+      clearInterval(x);
     }
   }, 100);
 };

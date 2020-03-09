@@ -14,8 +14,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 app.use(bodyParser.json());
 
-const allowWrite = true;
-const allowReset = false;
+let rawdata = fs.readFileSync('hconfig.json');
+let parseddata = JSON.parse(rawdata);
+console.log(parseddata);
+const allowRead = parseddata.allowRead;
+const allowWrite = parseddata.allowWrite;
+const allowReset = parseddata.allowReset;
 
 // we've started you off with Express,
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
@@ -50,6 +54,10 @@ db.serialize(() => {
 });
 
 // http://expressjs.com/en/starter/basic-routing.html
+app.get("/conf.json", (req, res) => {
+  res.sendFile(`${__dirname}/hconfig.json`);
+});
+
 app.get("/", (req, res) => {
   res.sendFile(`${__dirname}/views/index.html`);
 });
@@ -81,7 +89,7 @@ app.get("/t/comment", (req, res) => {
 
 app.get("/user", (req, res) => {
   var data = req.cookies;
-  if (data.user) {
+  if (data.user&&allowRead) {
     db.get(
       "SELECT status, joined, like, bad FROM Users WHERE username=?",
       [data.user],
@@ -129,9 +137,14 @@ app.get("/-:post", (req, res) => {
   res.sendFile(`${__dirname}/views/post.html`);
 });
 
+app.get("/assets/meme.png", (req, res) => {
+  res.sendFile(`${__dirname}/assets/meme.png`);
+});
+
 app.get("/get/user/:user", (req, res) => {
   var data = {};
   data.user = req.params.user;
+  if(!allowRead){
   db.get(
     "SELECT status, joined FROM Users WHERE username=?",
     [data.user],
@@ -144,13 +157,13 @@ app.get("/get/user/:user", (req, res) => {
         res.send(data);
       }
     }
-  );
+  );}
 });
 
 app.get("/get/userpic/:user", (req, res) => {
   const user = req.params.user;
   db.get("SELECT * FROM Users WHERE username=?", [user], (err, row) => {
-    if (!err && row) {
+    if (!err && row &&allowRead) {
       if (row.pic) {
         res.sendFile(`${__dirname}/assets/users/${user}.${row.pic}`);
       } else {
@@ -165,7 +178,7 @@ app.get("/get/userpic/:user", (req, res) => {
 app.get("/get/users/", (req, res) => {
   db.all("SELECT username, status, joined FROM Users", [], (err, row) => {
     if (!err) {
-      if (row) {
+      if (row&&allowRead) {
         res.send(row);
       }
     }
@@ -192,7 +205,7 @@ app.get("/get/posts/:sub", (req, res) => {
     [data.sub, user, limit, offset],
     (err, row) => {
       if (!err) {
-        if (row) {
+        if (row&&allowRead) {
           res.send(row);
         }
       }
@@ -217,7 +230,7 @@ app.get("/get/posts/", (req, res) => {
     "SELECT * FROM Posts WHERE (by LIKE ?) ORDER BY id DESC LIMIT ? OFFSET ?",
     [user, limit, offset],
     (err, row) => {
-      if (!err) {
+      if (!err&&allowRead) {
         res.send(row);
       }
     }
@@ -225,7 +238,7 @@ app.get("/get/posts/", (req, res) => {
 });
 app.get("/get/post/:id", (req, res) => {
   db.get("SELECT * FROM Posts WHERE id=?", [req.params.id], (err, row) => {
-    if (!err) {
+    if (!err&&allowRead) {
       res.send(row);
     }
   });
@@ -495,7 +508,7 @@ app.post("/user/login", (req, res) => {
     `SELECT username FROM Users WHERE username=?`,
     [user],
     (error, row) => {
-      if (row) {
+      if (row&&allowRead) {
         db.get(
           `SELECT password FROM Users WHERE username=?`,
           [user],
@@ -690,10 +703,10 @@ app.post("/edit/photo", (req, res) => {
                 }
               }
             );
-            Jimp.read(`assets/users/${user}.${type}`, (err, pic) => {
+            /*Jimp.read(`assets/users/${user}.${type}`, (err, pic) => {
               if (err) throw err;
               pic.cover(128, 128).write(`assets/users/${user}.${type}`);
-            });
+            });*/
           });
         }
       );
