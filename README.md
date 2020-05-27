@@ -8,6 +8,6 @@ Blogging platform? Reddit clone? A game to see who can login the fastest? I don'
 
 You can edit the tags, color scheme and nothing else in `hconfig.json`
 
-## Made ~~with~~ by [Glitch](https://glitch.com/)
+## Made with [Glitch](https://glitch.com/)
 
 \ ゜ o ゜)ノ
