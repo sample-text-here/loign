@@ -8,8 +8,12 @@
 body {
   font-family: helvetica, arial, sans-serif;
   margin: 2em;
-  overflow-x:hidden;
-  background-image: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 100%);
+  overflow-x: hidden;
+  background-image: linear-gradient(
+    135deg,
+    var(--accent1) 0%,
+    var(--accent2) 100%
+  );
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
@@ -49,20 +53,19 @@ input {
   font-size: 16px;
 }
 
-
 button {
   font-size: 1em;
   border: solid var(--accent2) 2px;
   border-radius: 3px;
   background-color: var(--background);
   cursor: pointer;
-  color:var(--note);
+  color: var(--note);
   transition: all 0.2s;
 }
 
 button:hover {
   background-color: var(--accent2);
-  color:var(--background);
+  color: var(--background);
 }
 
 li {
@@ -76,12 +79,16 @@ footer {
 }
 
 a {
-  background-image: linear-gradient(to right, var(--accent2) 0%, var(--accent2) 100%);
+  background-image: linear-gradient(
+    to right,
+    var(--accent2) 0%,
+    var(--accent2) 100%
+  );
   background-position: 0 100%;
   background-repeat: repeat-x;
   background-size: 2px 0;
-  padding:0.2em;
-  margin-left:-0.2em;
+  padding: 0.2em;
+  margin-left: -0.2em;
   color: var(--accent2);
   text-decoration: none;
   transition: all 0.2s;
@@ -101,13 +108,13 @@ hr {
 }
 
 #warnbtn {
-  border-color:red;
-  color:red;
+  border-color: red;
+  color: red;
 }
 
 #warnbtn:hover {
-  background-color:red;
-  color:var(--background);
+  background-color: red;
+  color: var(--background);
 }
 
 textarea {
@@ -117,7 +124,7 @@ textarea {
   height: 100%;
   padding: 1em;
   border: solid var(--note) 1px;
-  border-radius:2px;
+  border-radius: 2px;
 }
 
 .edit form {
@@ -134,26 +141,26 @@ textarea {
 }
 
 #settings {
-  width:100%;
+  width: 100%;
 }
 
 .anonprefs {
   padding: 1em;
   justify-content: space-between;
-  width:100%;
+  width: 100%;
 }
 
 .userprefs {
   padding: 1em;
   justify-content: space-between;
-  width:100%;
+  width: 100%;
 }
 
 .italic {
-  color:var(--note);
-  font-style:italic;
+  color: var(--note);
+  font-style: italic;
 }
 
 .empty {
-  display:none;
+  display: none;
 }

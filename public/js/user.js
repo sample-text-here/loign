@@ -1,12 +1,12 @@
 const user = window.location.pathname.split("@")[1];
 fetch("/user")
-  .then(r => r.json())
-  .then(u => {
+  .then((r) => r.json())
+  .then((u) => {
     username = u.user;
   });
 fetch("/get/user/" + user)
-  .then(e => e.json())
-  .then(res => {
+  .then((e) => e.json())
+  .then((res) => {
     if (res.joined) {
       $("user").innerText = res.user;
       $("memo").innerText = res.status;
@@ -18,10 +18,10 @@ fetch("/get/user/" + user)
     }
   });
 fetch("/get/posts?user=" + user)
-  .then(res => res.json())
-  .then(res => {
+  .then((res) => res.json())
+  .then((res) => {
     createPosts(res, $("posts"));
     initScroll("/get/posts?user=" + user, $("posts"));
   });
 
-$("pic").src="/get/userpic/"+user;
+$("pic").src = "/get/userpic/" + user;

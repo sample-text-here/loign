@@ -46,12 +46,12 @@ var clientX = -10000,
   stuckon;
 
 const initCursor = () => {
-  document.addEventListener("mousemove", e => {
+  document.addEventListener("mousemove", (e) => {
     clientX = e.clientX;
     clientY = e.clientY;
   });
 
-  document.addEventListener("click", e => {
+  document.addEventListener("click", (e) => {
     if (stuckon) {
       stuckon.click();
     }

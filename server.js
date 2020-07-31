@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 app.use(bodyParser.json());
 
-let rawdata = fs.readFileSync('hconfig.json');
+let rawdata = fs.readFileSync("hconfig.json");
 let parseddata = JSON.parse(rawdata);
 console.log(parseddata);
 const allowRead = parseddata.allowRead;
@@ -89,7 +89,7 @@ app.get("/t/comment", (req, res) => {
 
 app.get("/user", (req, res) => {
   var data = req.cookies;
-  if (data.user&&allowRead) {
+  if (data.user && allowRead) {
     db.get(
       "SELECT status, joined, like, bad FROM Users WHERE username=?",
       [data.user],
@@ -144,26 +144,27 @@ app.get("/assets/meme.png", (req, res) => {
 app.get("/get/user/:user", (req, res) => {
   var data = {};
   data.user = req.params.user;
-  if(!allowRead){
-  db.get(
-    "SELECT status, joined FROM Users WHERE username=?",
-    [data.user],
-    (err, row) => {
-      if (!err) {
-        if (row) {
-          data.status = row.status;
-          data.joined = row.joined;
+  if (!allowRead) {
+    db.get(
+      "SELECT status, joined FROM Users WHERE username=?",
+      [data.user],
+      (err, row) => {
+        if (!err) {
+          if (row) {
+            data.status = row.status;
+            data.joined = row.joined;
+          }
+          res.send(data);
         }
-        res.send(data);
       }
-    }
-  );}
+    );
+  }
 });
 
 app.get("/get/userpic/:user", (req, res) => {
   const user = req.params.user;
   db.get("SELECT * FROM Users WHERE username=?", [user], (err, row) => {
-    if (!err && row &&allowRead) {
+    if (!err && row && allowRead) {
       if (row.pic) {
         res.sendFile(`${__dirname}/assets/users/${user}.${row.pic}`);
       } else {
@@ -178,7 +179,7 @@ app.get("/get/userpic/:user", (req, res) => {
 app.get("/get/users/", (req, res) => {
   db.all("SELECT username, status, joined FROM Users", [], (err, row) => {
     if (!err) {
-      if (row&&allowRead) {
+      if (row && allowRead) {
         res.send(row);
       }
     }
@@ -205,7 +206,7 @@ app.get("/get/posts/:sub", (req, res) => {
     [data.sub, user, limit, offset],
     (err, row) => {
       if (!err) {
-        if (row&&allowRead) {
+        if (row && allowRead) {
           res.send(row);
         }
       }
@@ -230,7 +231,7 @@ app.get("/get/posts/", (req, res) => {
     "SELECT * FROM Posts WHERE (by LIKE ?) ORDER BY id DESC LIMIT ? OFFSET ?",
     [user, limit, offset],
     (err, row) => {
-      if (!err&&allowRead) {
+      if (!err && allowRead) {
         res.send(row);
       }
     }
@@ -238,7 +239,7 @@ app.get("/get/posts/", (req, res) => {
 });
 app.get("/get/post/:id", (req, res) => {
   db.get("SELECT * FROM Posts WHERE id=?", [req.params.id], (err, row) => {
-    if (!err&&allowRead) {
+    if (!err && allowRead) {
       res.send(row);
     }
   });
@@ -257,13 +258,13 @@ app.post("/post/submitPost", (req, res) => {
         db.run(
           `INSERT INTO Posts (title, post, by, date, tag) VALUES (?,?,?,?,?)`,
           [title, post, by, date, tag],
-          err => {
+          (err) => {
             if (err) {
               console.log(err);
               console.log("error!");
               res.send({
                 message: "Something happened, please try again",
-                error: true
+                error: true,
               });
             } else {
               console.log("success");
@@ -287,7 +288,7 @@ app.post("/post/comment", (req, res) => {
     comment: req.body.comment,
     id: req.body.id,
     by: req.cookies.user,
-    date: new Date()
+    date: new Date(),
   };
   if (req.cookies.user && allowWrite) {
     db.get("SELECT (comments) FROM Posts WHERE id=?", [data.id], (err, row) => {
@@ -297,7 +298,7 @@ app.post("/post/comment", (req, res) => {
           console.log("first");
           db.run("UPDATE Posts SET comments=? WHERE id=?", [
             "[" + JSON.stringify(data) + "]",
-            data.id
+            data.id,
           ]);
         } else {
           var com = JSON.parse(row.comments);
@@ -305,7 +306,7 @@ app.post("/post/comment", (req, res) => {
           console.log(com);
           db.run("UPDATE Posts SET comments=? WHERE id=?", [
             JSON.stringify(com),
-            data.id
+            data.id,
           ]);
           console.log(data);
         }
@@ -353,7 +354,7 @@ app.post("/post/vote/:wat", (req, res) => {
                 db.run(
                   `UPDATE Users SET ${opt}=? WHERE username=?`,
                   [tmp, user],
-                  err => {
+                  (err) => {
                     if (err) {
                       res.send({ error: true });
                     }
@@ -362,7 +363,7 @@ app.post("/post/vote/:wat", (req, res) => {
                 db.run(
                   `UPDATE Posts SET votes=0${add} WHERE id=?`,
                   [id],
-                  err => {
+                  (err) => {
                     if (err) {
                       res.send({ error: true });
                     }
@@ -375,7 +376,7 @@ app.post("/post/vote/:wat", (req, res) => {
                   db.run(
                     `UPDATE Posts SET votes=votes${add} WHERE id=?`,
                     [id],
-                    err => {
+                    (err) => {
                       if (err) {
                         res.send({ error: true });
                       }
@@ -392,7 +393,7 @@ app.post("/post/vote/:wat", (req, res) => {
                   db.run(
                     `UPDATE Posts SET votes=votes${add} WHERE id=?`,
                     [id],
-                    err => {
+                    (err) => {
                       if (err) {
                         res.send({ error: true });
                       }
@@ -403,7 +404,7 @@ app.post("/post/vote/:wat", (req, res) => {
                 db.run(
                   `UPDATE Users SET ${opt}=? WHERE username=?`,
                   [tmp, user],
-                  err => {
+                  (err) => {
                     if (err) {
                       res.send({ error: true });
                     }
@@ -417,7 +418,7 @@ app.post("/post/vote/:wat", (req, res) => {
                     db.run(
                       `UPDATE Users SET bad=? WHERE username=?`,
                       [tmp.splice(tmp, 1), user],
-                      err => {
+                      (err) => {
                         if (err) {
                           res.send({ error: true });
                         }
@@ -432,7 +433,7 @@ app.post("/post/vote/:wat", (req, res) => {
                     db.run(
                       `UPDATE Users SET like=? WHERE username=?`,
                       [tmp.splice(tmp, 1), user],
-                      err => {
+                      (err) => {
                         if (err) {
                           res.send({ error: true });
                         }
@@ -476,12 +477,12 @@ app.post("/user/addUser", (req, res) => {
           db.run(
             `INSERT INTO Users (username, password, joined) VALUES (?,?, ?)`,
             [user, pass, joined],
-            error => {
+            (error) => {
               if (error) {
                 console.log("error!");
                 res.send({
                   message: "Something happened, please try again",
-                  error: true
+                  error: true,
                 });
               } else {
                 console.log("success");
@@ -508,7 +509,7 @@ app.post("/user/login", (req, res) => {
     `SELECT username FROM Users WHERE username=?`,
     [user],
     (error, row) => {
-      if (row&&allowRead) {
+      if (row && allowRead) {
         db.get(
           `SELECT password FROM Users WHERE username=?`,
           [user],
@@ -517,7 +518,7 @@ app.post("/user/login", (req, res) => {
               console.log("error!");
               res.send({
                 message: "Something happened, please try again",
-                error: true
+                error: true,
               });
             } else {
               if (row.password == pass) {
@@ -550,12 +551,12 @@ app.post("/user/deleteUser", (req, res) => {
         [user],
         (error, row) => {
           if (row) {
-            db.run(`DELETE FROM Users WHERE username=?`, [user], err => {
+            db.run(`DELETE FROM Users WHERE username=?`, [user], (err) => {
               if (err) {
                 console.log("error!");
                 res.send({
                   message: "Something happened, please try again",
-                  error: true
+                  error: true,
                 });
               } else {
                 console.log("success");
@@ -595,12 +596,12 @@ app.post("/user/updatePass", (req, res) => {
                   db.run(
                     `UPDATE Users SET password=? WHERE username=?`,
                     [newpass, user],
-                    err => {
+                    (err) => {
                       if (err) {
                         console.log("error!");
                         res.send({
                           message: "Something happened, please try again",
-                          error: true
+                          error: true,
                         });
                       } else {
                         console.log("success");
@@ -611,7 +612,7 @@ app.post("/user/updatePass", (req, res) => {
                 } else {
                   res.send({
                     message: "Incorrect password",
-                    error: true
+                    error: true,
                   });
                 }
               }
@@ -643,12 +644,12 @@ app.post("/user/updateStatus", (req, res) => {
             db.run(
               `UPDATE Users SET status=? WHERE username=?`,
               [status, user],
-              err => {
+              (err) => {
                 if (err) {
                   console.log("error!");
                   res.send({
                     message: "Something happened, please try again",
-                    error: true
+                    error: true,
                   });
                 } else {
                   console.log("success");
@@ -690,12 +691,12 @@ app.post("/edit/photo", (req, res) => {
           var pic = req.files.pic;
           var type = pic.mimetype.split("/")[1];
 
-          pic.mv(`assets/users/${user}.${type}`, function(err) {
+          pic.mv(`assets/users/${user}.${type}`, function (err) {
             if (err) return res.status(500).send(err);
             db.run(
               "UPDATE Users SET pic=? WHERE username=?",
               [type, user],
-              err => {
+              (err) => {
                 if (!err) {
                   res.send("File uploaded!");
                 } else {
@@ -738,14 +739,14 @@ app.get("/reset", (req, res) => {
 });
 
 // helper function that prevents html/css/script malice
-const cleanseString = function(string) {
+const cleanseString = function (string) {
   return string
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 };
 
-app.use(function(req, res) {
+app.use(function (req, res) {
   res.status(404).sendFile(`${__dirname}/views/404.html`);
 });
 

@@ -1,17 +1,17 @@
 fetch("../user")
-  .then(e => e.json())
-  .then(res => {
+  .then((e) => e.json())
+  .then((res) => {
     $("status").value = res.status;
     $("pic").src = "https://loign.glitch.me/get/userpic/" + res.user;
   });
 
-$("form").onsubmit = e => {
+$("form").onsubmit = (e) => {
   e.preventDefault();
 
   const data = {
     oldpass: $("oldpass").value,
     newpass: $("newpass").value,
-    confpass: $("confpass").value
+    confpass: $("confpass").value,
   };
 
   if (data.newpass != data.confpass) {
@@ -23,10 +23,10 @@ $("form").onsubmit = e => {
   fetch("/user/updatePass", {
     method: "POST",
     body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   })
-    .then(res => res.json())
-    .then(res => {
+    .then((res) => res.json())
+    .then((res) => {
       if (res.error) {
         parseError(res.message);
       } else {
@@ -41,10 +41,10 @@ function deluser() {
     res = confirm("This cannot be reversed!");
     if (res) {
       fetch("/user/deleteUser", {
-        method: "POST"
+        method: "POST",
       })
-        .then(e => e.text())
-        .then(e => {
+        .then((e) => e.text())
+        .then((e) => {
           if (!e.error) {
             fetch("/logout").then(() => {
               goto("..");
@@ -67,16 +67,16 @@ $("status").addEventListener("keyup", () => {
 
 function update() {
   var data = {
-    status: $("status").value
+    status: $("status").value,
   };
 
   fetch("user/updateStatus", {
     method: "POST",
     body: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   })
-    .then(res => res.json())
-    .then(res => {
+    .then((res) => res.json())
+    .then((res) => {
       console.log(res);
     });
 }

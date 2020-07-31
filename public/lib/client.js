@@ -1,8 +1,8 @@
-const $ = e => document.getElementById(e);
+const $ = (e) => document.getElementById(e);
 var username;
 fetch("/conf.json")
-  .then(res => res.json())
-  .then(res => {
+  .then((res) => res.json())
+  .then((res) => {
     var doc = document.documentElement.style;
     doc.setProperty("--foreground", res.colors.foreground);
     doc.setProperty("--background", res.colors.background);
@@ -16,7 +16,7 @@ fetch("/conf.json")
       );
     }
   });
-const queue = e => {
+const queue = (e) => {
   var x = setInterval(() => {
     if (e) {
       e();
@@ -64,11 +64,11 @@ function timeSince(date) {
 var loading = true;
 function createPosts(sub, el) {
   fetch("/user")
-    .then(res => res.json())
-    .then(user => {
+    .then((res) => res.json())
+    .then((user) => {
       fetch("/t/card/")
-        .then(res => res.text())
-        .then(res => {
+        .then((res) => res.text())
+        .then((res) => {
           if (loading) {
             el.innerHTML = "";
             loading = false;
@@ -122,7 +122,7 @@ function getCardStruct(obj, user = undefined) {
     timeSince(obj.date) + "",
     cleanStr(obj.post + ""),
     obj.tag + "",
-    obj.tag + ""
+    obj.tag + "",
   ];
 }
 
@@ -150,8 +150,8 @@ function initScroll(sub, el) {
   window.addEventListener("scroll", () => {
     if (window.scrollY > document.documentElement.clientHeight - 400) {
       fetch(sub + x + "limit=6&offset=" + scroll)
-        .then(res => res.json())
-        .then(e => {
+        .then((res) => res.json())
+        .then((e) => {
           createPosts(e, el);
         });
       scroll += 6;
@@ -174,10 +174,10 @@ function upvote(id, el) {
     fetch("/post/vote/up", {
       method: "POST",
       body: JSON.stringify({ id: id }),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     })
-      .then(res => res.json())
-      .then(res => {
+      .then((res) => res.json())
+      .then((res) => {
         while (el.className != "val") {
           el = el.nextSibling;
         }
@@ -197,10 +197,10 @@ function downvote(id, el) {
     fetch("/post/vote/down", {
       method: "POST",
       body: JSON.stringify({ id: id }),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     })
-      .then(res => res.json())
-      .then(res => {
+      .then((res) => res.json())
+      .then((res) => {
         while (el.className != "val") {
           el = el.previousSibling;
         }

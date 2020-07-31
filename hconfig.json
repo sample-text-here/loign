@@ -6,16 +6,9 @@
     "accent1": "#81d4fa",
     "accent2": "#05a8f4"
   },
-  "tags": [
-    "Tech",
-    "News",
-    "Funny",
-    "Help",
-    "Meta",
-    "Other"
-  ],
+  "tags": ["Tech", "News", "Funny", "Help", "Meta", "Other"],
   "memes": true,
-  "allowRead":true,
-  "allowWrite":true,
-  "allowReset":false
+  "allowRead": true,
+  "allowWrite": true,
+  "allowReset": false
 }

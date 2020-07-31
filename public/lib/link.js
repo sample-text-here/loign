@@ -3,7 +3,7 @@ var links = document.querySelectorAll("a");
 var buttons = document.querySelectorAll("button");
 var isBtnClicked = true;
 var x, y;
-setInterval(function() {
+setInterval(function () {
   links = document.querySelectorAll("a");
   buttons = document.querySelectorAll("button");
 }, 100);
@@ -75,8 +75,8 @@ window.onload = () => {
 };
 
 //make circle expand when links clicked
-links.forEach(a => {
-  a.addEventListener("click", e => {
+links.forEach((a) => {
+  a.addEventListener("click", (e) => {
     e.preventDefault();
     anim.className = "anim-last anim";
     anim.style.left = x + "px";
@@ -90,8 +90,8 @@ links.forEach(a => {
 });
 
 //same, but with buttons with class "link"
-buttons.forEach(btn => {
-  btn.addEventListener("click", e => {
+buttons.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
     if (isBtnClicked && btn.className.match(/link/)) {
       e.preventDefault();
       anim.className = "anim-last anim";
